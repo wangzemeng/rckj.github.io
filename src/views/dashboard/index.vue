@@ -303,9 +303,11 @@ import type { VisitOverviewDetail, VisitTrendDetail } from "@/api/system/log";
 import { useUserStore } from "@/stores/user";
 import { formatGrowthRate } from "@/utils";
 import { useTransition } from "@vueuse/core";
+import { useRecentMenus } from "@/composables";
 
 const router = useRouter();
 const userStore = useUserStore();
+const { recentMenus, clearRecentMenus } = useRecentMenus();
 const recentExpanded = ref(false);
 
 const hours = new Date().getHours();
