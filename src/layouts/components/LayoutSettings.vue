@@ -307,7 +307,9 @@ const generateSettingsCode = (): string => {
     themeColor: `"${settingsStore.themeColor}"`,
     showWatermark: settingsStore.showWatermark,
     watermarkContent: "pkg.name",
-    sidebarColorScheme: `SidebarColor.${settingsStore.sidebarColorScheme.toUpperCase().replace("-", "_")}`,
+    sidebarColorScheme: `SidebarColor.${settingsStore.sidebarColorScheme
+      .toUpperCase()
+      .replace("-", "_")}`,
   };
 
   return `const defaultSettings: AppSettings = {

@@ -47,7 +47,7 @@
       </el-tooltip>
 
       <!-- 验证码 -->
-      <el-form-item prop="captchaCode">
+      <!-- <el-form-item prop="captchaCode">
         <div flex items-center gap-10px>
           <el-input
             v-model.trim="model.captchaCode"
@@ -76,14 +76,14 @@
             <el-text v-else type="info" size="small">点击获取验证码</el-text>
           </div>
         </div>
-      </el-form-item>
+      </el-form-item> -->
 
-      <el-form-item>
+      <!-- <el-form-item>
         <div class="flex-y-center w-full gap-10px">
           <el-checkbox v-model="isRead">{{ t("login.agree") }}</el-checkbox>
           <el-link type="primary" underline="never">{{ t("login.userAgreement") }}</el-link>
         </div>
-      </el-form-item>
+      </el-form-item> -->
 
       <!-- 注册按钮 -->
       <el-form-item>
@@ -102,7 +102,6 @@
 import type { FormInstance } from "element-plus";
 import { Lock } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
-import AuthAPI from "@/api/auth";
 import type { LoginRequest } from "@/api/auth";
 
 const { t } = useI18n();
@@ -110,13 +109,11 @@ const { t } = useI18n();
 const emit = defineEmits(["update:modelValue"]);
 const toLogin = () => emit("update:modelValue", "login");
 
-onMounted(() => getCaptcha());
+// onMounted(() => getCaptcha());
 
 const formRef = ref<FormInstance>();
 const loading = ref(false); // 按钮 loading 状态
 const isCapsLock = ref(false); // 是否大写锁定
-const captchaBase64 = ref(); // 验证码图片Base64字符串
-const isRead = ref(false);
 
 interface Model extends LoginRequest {
   confirmPassword: string;
@@ -182,16 +179,16 @@ const rules = computed(() => {
 });
 
 // 获取验证码
-const codeLoading = ref(false);
-function getCaptcha() {
-  codeLoading.value = true;
-  AuthAPI.getCaptcha()
-    .then((data) => {
-      model.value.captchaId = data.captchaId;
-      captchaBase64.value = data.captchaBase64;
-    })
-    .finally(() => (codeLoading.value = false));
-}
+// const codeLoading = ref(false);
+// function getCaptcha() {
+//   codeLoading.value = true;
+//   AuthAPI.getCaptcha()
+//     .then((data) => {
+//       model.value.captchaId = data.captchaId;
+//       captchaBase64.value = data.captchaBase64;
+//     })
+//     .finally(() => (codeLoading.value = false));
+// }
 
 // 检查输入大小写
 function checkCapsLock(event: KeyboardEvent) {

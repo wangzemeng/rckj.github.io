@@ -70,39 +70,6 @@
                 </el-form-item>
               </el-tooltip>
 
-              <el-form-item prop="captchaCode">
-                <div flex items-center gap-10px>
-                  <el-input
-                    v-model.trim="loginFormData.captchaCode"
-                    :placeholder="t('login.captchaCode')"
-                    clearable
-                    class="flex-1"
-                    @keyup.enter="handleLoginSubmit"
-                  >
-                    <template #prefix>
-                      <div class="i-svg:captcha" />
-                    </template>
-                  </el-input>
-                  <div cursor-pointer h-44px w-140px flex-center @click="getCaptcha">
-                    <el-icon v-if="codeLoading" class="is-loading" size="20"><Loading /></el-icon>
-                    <img
-                      v-else-if="captchaBase64"
-                      border-rd-4px
-                      w-full
-                      h-full
-                      block
-                      object-cover
-                      shadow="[0_0_0_1px_var(--el-border-color)_inset]"
-                      :src="captchaBase64"
-                      alt="captchaCode"
-                      title="点击刷新验证码"
-                      @error="getCaptcha"
-                    />
-                    <el-text v-else type="info" size="small">点击获取验证码</el-text>
-                  </div>
-                </div>
-              </el-form-item>
-
               <div class="flex-x-between w-full">
                 <el-checkbox v-model="loginFormData.rememberMe">
                   {{ t("login.rememberMe") }}
@@ -167,9 +134,8 @@
 </template>
 
 <script setup lang="ts">
-import { User, Lock, Loading } from "@element-plus/icons-vue";
 import type { FormInstance } from "element-plus";
-import AuthAPI from "@/api/auth";
+// import AuthAPI from "@/api/auth";
 import type { LoginRequest } from "@/api/auth";
 import router from "@/router";
 import { useUserStore } from "@/stores";
@@ -195,8 +161,8 @@ const formComponents = {
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
 const isCapsLock = ref(false);
-const captchaBase64 = ref<string>();
-const codeLoading = ref(false);
+// const captchaBase64 = ref<string>();
+// const codeLoading = ref(false);
 
 const rememberMe = AuthStorage.getRememberMe();
 const loginFormData = ref<LoginRequest>({
@@ -218,15 +184,15 @@ const loginRules = computed(() => ({
   ],
 }));
 
-function getCaptcha() {
-  codeLoading.value = true;
-  AuthAPI.getCaptcha()
-    .then((data) => {
-      loginFormData.value.captchaId = data.captchaId;
-      captchaBase64.value = data.captchaBase64;
-    })
-    .finally(() => (codeLoading.value = false));
-}
+// function getCaptcha() {
+//   codeLoading.value = true;
+//   AuthAPI.getCaptcha()
+//     .then((data) => {
+//       loginFormData.value.captchaId = data.captchaId;
+//       captchaBase64.value = data.captchaBase64;
+//     })
+//     .finally(() => (codeLoading.value = false));
+// }
 
 async function handleLoginSubmit() {
   const valid = await loginFormRef.value?.validate().then(
@@ -241,10 +207,10 @@ async function handleLoginSubmit() {
       async () => {
         const redirectPath = (route.query.redirect as string) || "/";
         await router.push(decodeURIComponent(redirectPath));
-      },
-      () => {
-        getCaptcha();
       }
+      // () => {
+      //   getCaptcha();
+      // }
     );
   } finally {
     loading.value = false;
@@ -261,7 +227,7 @@ function showForm(type: "register" | "resetPwd") {
   component.value = type;
 }
 
-onMounted(() => getCaptcha());
+// onMounted(() => getCaptcha());
 </script>
 
 <style lang="scss" scoped>
