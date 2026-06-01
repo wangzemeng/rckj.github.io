@@ -36,8 +36,6 @@ export interface UserQueryParams extends BaseQueryParams {
 
 /** 用户分页对象 */
 export interface UserItem {
-  /** 用户ID */
-  id: string;
   /** 用户头像地址 */
   avatar?: string;
   /** 创建时间 */

@@ -15,95 +15,6 @@
             <p class="dash-header__date">{{ currentDateStr }}</p>
           </div>
         </div>
-        <div class="dash-header__end">
-          <div class="brand-group">
-            <span class="brand-group__label" style="color: #e67e22">
-              <el-icon :size="13"><Folder /></el-icon>
-              <span>仓库</span>
-            </span>
-            <span class="brand-group__icons">
-              <a
-                href="https://gitee.com/youlaiorg/vue3-element-admin"
-                target="_blank"
-                title="Gitee"
-                class="brand-icon"
-                style="color: #c71d23"
-              >
-                <span class="i-svg:gitee" />
-              </a>
-              <a
-                href="https://github.com/youlaitech/vue3-element-admin"
-                target="_blank"
-                title="GitHub"
-                class="brand-icon"
-                style="color: #0969da"
-              >
-                <span class="i-svg:github" />
-              </a>
-              <a
-                href="https://gitcode.com/youlai/vue3-element-admin"
-                target="_blank"
-                title="GitCode"
-                class="brand-icon"
-                style="color: #f36d26"
-              >
-                <span class="i-svg:gitcode" />
-              </a>
-            </span>
-          </div>
-          <div class="brand-group">
-            <span class="brand-group__label" style="color: #409eff">
-              <el-icon :size="13"><Document /></el-icon>
-              <span>文档</span>
-            </span>
-            <span class="brand-group__icons">
-              <a
-                href="https://juejin.cn/post/7228990409909108793"
-                target="_blank"
-                title="掘金"
-                class="brand-icon"
-                style="color: #1e80ff"
-              >
-                <span class="i-svg:juejin" />
-              </a>
-              <a
-                href="https://youlai.blog.csdn.net/article/details/130191394"
-                target="_blank"
-                title="CSDN"
-                class="brand-icon"
-                style="color: #fc5531"
-              >
-                <span class="i-svg:csdn" />
-              </a>
-              <a
-                href="https://www.cnblogs.com/haoxianrui/p/17331952.html"
-                target="_blank"
-                title="博客园"
-                class="brand-icon"
-                style="color: #f68a1e"
-              >
-                <span class="i-svg:cnblogs" />
-              </a>
-            </span>
-          </div>
-          <div class="brand-group">
-            <span class="brand-group__label" style="color: #e74c3c">
-              <el-icon :size="13"><VideoCamera /></el-icon>
-              <span>视频</span>
-            </span>
-            <span class="brand-group__icons">
-              <a
-                href="https://www.bilibili.com/video/BV1eFUuYyEFj"
-                target="_blank"
-                title="Bilibili"
-                class="brand-icon"
-                style="color: #fb7299"
-              >
-                <span class="i-svg:bilibili" />
-              </a>
-            </span>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -116,17 +27,10 @@
           <el-icon :size="18"><User /></el-icon>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__num">{{ onlineUserCount }}</span>
-          <span class="stat-card__label">在线用户</span>
+          <span class="stat-card__num">{{ 48 }}</span>
+          <span class="stat-card__label">指标总数</span>
         </div>
-        <span
-          :class="[
-            'stat-card__badge',
-            isConnected ? 'stat-card__badge--on' : 'stat-card__badge--off',
-          ]"
-        >
-          {{ isConnected ? "实时" : "离线" }}
-        </span>
+        <span :class="['stat-card__badge', 'stat-card__trend stat-card__1']">全部</span>
       </div>
 
       <div class="stat-card">
@@ -135,15 +39,9 @@
         </div>
         <div class="stat-card__body">
           <span class="stat-card__num">{{ displayTransitionUvCount }}</span>
-          <span class="stat-card__label">今日访客</span>
+          <span class="stat-card__label">已发布</span>
         </div>
-        <span v-if="uvGrowthText !== '--'" class="stat-card__trend">
-          <el-icon :size="12">
-            <ArrowUp v-if="uvIsUp" />
-            <ArrowDown v-else />
-          </el-icon>
-          {{ uvGrowthText }}
-        </span>
+        <span v-if="uvGrowthText !== '--'" class="stat-card__trend stat-card__2">2026Q1</span>
       </div>
 
       <div class="stat-card">
@@ -152,15 +50,9 @@
         </div>
         <div class="stat-card__body">
           <span class="stat-card__num">{{ displayTransitionPvCount }}</span>
-          <span class="stat-card__label">今日浏览量</span>
+          <span class="stat-card__label">已填报</span>
         </div>
-        <span v-if="pvGrowthText !== '--'" class="stat-card__trend">
-          <el-icon :size="12">
-            <ArrowUp v-if="pvIsUp" />
-            <ArrowDown v-else />
-          </el-icon>
-          {{ pvGrowthText }}
-        </span>
+        <span v-if="pvGrowthText !== '--'" class="stat-card__trend stat-card__3">填报中</span>
       </div>
 
       <div class="stat-card">
@@ -168,13 +60,10 @@
           <el-icon :size="18"><Star /></el-icon>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__num">1,286</span>
-          <span class="stat-card__label">系统用户</span>
+          <span class="stat-card__num">9</span>
+          <span class="stat-card__label">AI审核中</span>
         </div>
-        <span class="stat-card__trend stat-card__trend--up">
-          <el-icon :size="12"><ArrowUp /></el-icon>
-          12.5%
-        </span>
+        <span class="stat-card__trend stat-card__4">进行中</span>
       </div>
     </section>
 
@@ -225,7 +114,7 @@
     <!-- ============================================================
     Chart
     ============================================================ -->
-    <section class="dash-chart">
+    <!-- <section class="dash-chart">
       <div class="card">
         <div class="card__head">
           <h3 class="card__title">访问趋势</h3>
@@ -238,50 +127,163 @@
           <ECharts :options="visitTrendChartOptions" height="310px" />
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- ============================================================
     Bottom: todo + timeline
     ============================================================ -->
-    <section class="dash-bottom">
-      <div class="card">
-        <div class="card__head">
-          <h3 class="card__title">待办事项</h3>
-          <el-tag size="small" round>5 项</el-tag>
-        </div>
-        <div class="card__body">
-          <div
-            v-for="todo in todoItems"
-            :key="todo.id"
-            class="todo-row"
-            :class="{ 'todo-row--done': todo.done }"
-          >
-            <el-icon
-              :size="16"
-              :class="todo.done ? 'todo-row__icon--done' : 'todo-row__icon--pending'"
-            >
-              <CircleCheck v-if="todo.done" />
-              <Clock v-else />
-            </el-icon>
-            <span class="todo-row__title">{{ todo.title }}</span>
-            <el-tag :type="todo.tagType" size="small" effect="plain" class="todo-row__tag">
-              {{ todo.tag }}
-            </el-tag>
-            <span class="todo-row__time">{{ todo.time }}</span>
+
+    <div class="dash-layout">
+      <section class="dash-layout-start">
+        <div class="card">
+          <div class="card__head">
+            <h3 class="card__title">AI 智能分析报告</h3>
+            <el-tag size="small" round cursor-pointer>重新分析</el-tag>
+          </div>
+          <div class="card__body">
+            <!-- // 这里需要你AI来帮我写下UI -->
+            <div class="ai-report">
+              <!-- 核心结论区域 -->
+              <div class="report-section report-section--conclusion">
+                <div class="report-section__header">
+                  <el-icon class="report-section__icon" :size="18"><DataLine /></el-icon>
+                  <span class="report-section__title">本期核心结论</span>
+                </div>
+                <div class="report-section__body">
+                  <div class="conclusion-stats">
+                    <div class="stat-item">
+                      <span class="stat-label">总体完成率</span>
+                      <span class="stat-value stat-value--primary">85.7%</span>
+                      <span class="stat-trend">↑ 4.2%</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-label">研发原局立法指标</span>
+                      <span class="stat-value">87.3%</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-label">财政池预算执行率</span>
+                      <span class="stat-value">91.2%</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-label">自定义指标完成率</span>
+                      <span class="stat-value">78.6%</span>
+                    </div>
+                  </div>
+                  <p class="conclusion-text">
+                    本季度共涉及
+                    <strong>12个下级部门</strong>
+                    、
+                    <strong>48项指标</strong>
+                    评估。 总体完成率
+                    <strong>85.7%</strong>
+                    ，较上期提升
+                    <strong class="trend-up">4.2个百分点</strong>
+                    。
+                  </p>
+                </div>
+              </div>
+
+              <!-- 注意事项区域 -->
+              <div class="report-section report-section--warning">
+                <div class="report-section__header">
+                  <el-icon class="report-section__icon" :size="18"><WarningFilled /></el-icon>
+                  <span class="report-section__title">注意事项</span>
+                </div>
+                <div class="report-section__body">
+                  <div class="warning-list">
+                    <div class="warning-item">
+                      <el-icon class="warning-icon" :size="14"><InfoFilled /></el-icon>
+                      <span>
+                        城建局、交通局
+                        <strong>2个部门</strong>
+                        指标完成率低于
+                        <span class="warning-value">60%</span>
+                      </span>
+                    </div>
+                    <div class="warning-item">
+                      <el-icon class="warning-icon" :size="14"><Clock /></el-icon>
+                      <span>请主管部门关注并推动整改，建议主管部门关注并提交整改方案</span>
+                    </div>
+                    <div class="warning-item">
+                      <el-icon class="warning-icon" :size="14"><TrendCharts /></el-icon>
+                      <span>
+                        下季度将重点考核
+                        <strong>数字化建设</strong>
+                        相关指标，请提前准备
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
+      <!-- 部门完成进度 Top 5 -->
+      <section class="dash-layout-end">
+        <div class="card dash-progress">
+          <div class="card__head">
+            <h3 class="card__title">
+              <el-icon class="title-icon"><TrendCharts /></el-icon>
+              部门完成进度 Top 5
+            </h3>
+            <!-- <el-tag size="small" round effect="plain">季度目标</el-tag> -->
+          </div>
+          <div class="card__body">
+            <div class="progress-list">
+              <div v-for="item in topDepartments" :key="item.name" class="progress-item">
+                <div class="progress-item__info">
+                  <span class="dept-name">{{ item.name }}</span>
+                  <span class="dept-percent">{{ item.percent }}%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div
+                    class="progress-bar-fill"
+                    :style="{ width: item.percent + '%' }"
+                    :class="{
+                      'fill-high': item.percent >= 90,
+                      'fill-mid': item.percent >= 80 && item.percent < 90,
+                      'fill-low': item.percent < 80,
+                    }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 近期动态 -->
+    <section class="dash-recent-events">
       <div class="card">
         <div class="card__head">
-          <h3 class="card__title">系统动态</h3>
+          <h3 class="card__title">
+            <el-icon class="title-icon"><Bell /></el-icon>
+            近期动态
+          </h3>
+          <el-tag cursor-pointer size="small" round effect="plain">查看全部</el-tag>
         </div>
-        <div class="card__body card__body--scroll">
-          <div class="feed">
-            <div v-for="item in activities" :key="item.id" class="feed__item">
-              <span :class="['feed__dot', `feed__dot--${item.color}`]" />
-              <span class="feed__text">{{ item.content }}</span>
-              <span class="feed__time">{{ item.time }}</span>
+        <div class="card__body card__body--no-padding">
+          <div class="event-list">
+            <div class="event-list__header">
+              <span class="col-dept">部门名称</span>
+              <span class="col-type">操作类型</span>
+              <span class="col-target">相关指标</span>
+              <span class="col-time">时间</span>
+              <span class="col-status">状态</span>
+            </div>
+            <div v-for="event in recentEvents" :key="event.id" class="event-list__row">
+              <span class="col-dept">{{ event.dept }}</span>
+              <span class="col-type">{{ event.type }}</span>
+              <span class="col-target">{{ event.target }}</span>
+              <span class="col-time">{{ event.time }}</span>
+              <span class="col-status">
+                <el-tag :type="event.statusType" size="small" effect="plain">
+                  {{ event.status }}
+                </el-tag>
+              </span>
             </div>
           </div>
         </div>
@@ -294,33 +296,16 @@
 defineOptions({ name: "Dashboard", inheritAttrs: false });
 
 import { dayjs } from "element-plus";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import LogAPI from "@/api/system/log";
 import type { VisitOverviewDetail, VisitTrendDetail } from "@/api/system/log";
 import { useUserStore } from "@/stores/user";
 import { formatGrowthRate } from "@/utils";
 import { useTransition } from "@vueuse/core";
-import {
-  User,
-  Avatar,
-  Monitor,
-  Star,
-  Folder,
-  Document,
-  VideoCamera,
-  ArrowUp,
-  ArrowDown,
-  Clock,
-  Menu,
-  CircleCheck,
-} from "@element-plus/icons-vue";
-import { useOnlineCount, useRecentMenus } from "@/composables";
 
 const router = useRouter();
 const userStore = useUserStore();
-const { onlineUserCount, isConnected } = useOnlineCount();
-const { recentMenus, clearRecentMenus } = useRecentMenus();
 const recentExpanded = ref(false);
 
 const hours = new Date().getHours();
@@ -332,80 +317,49 @@ const greetings = computed(() => {
   if (hours >= 18 && hours < 24) return `晚上好，${n}`;
   return `夜深了，${n}`;
 });
+// 部门完成进度数据（内容严格按要求）
+const topDepartments = [
+  { name: "财政局", percent: 93.2 },
+  { name: "立法办", percent: 89.7 },
+  { name: "教育局", percent: 85.1 },
+  { name: "卫生平健委", percent: 79.4 },
+];
+// 近期动态数据（内容与表格完全一致）
+const recentEvents = ref([
+  {
+    id: 1,
+    dept: "财政局",
+    type: "提交填报",
+    target: "预算执行情况报告",
+    time: "2026-03-28 14:32",
+    status: "已通过",
+    statusType: "success",
+  },
+  {
+    id: 2,
+    dept: "城建局",
+    type: "AI审核中",
+    target: "城市建设年度计划完成情况",
+    time: "2026-03-27 09:15",
+    status: "待审核",
+    statusType: "warning",
+  },
+  {
+    id: 3,
+    dept: "教育局",
+    type: "提交填报",
+    target: "义务教育普及率",
+    time: "2026-03-26 16:44",
+    status: "已通过",
+    statusType: "success",
+  },
+]);
 
 const currentDateStr = computed(() => {
   const d = new Date();
   const w = ["日", "一", "二", "三", "四", "五", "六"];
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 星期${w[d.getDay()]}`;
 });
-
-interface TodoItem {
-  id: number;
-  title: string;
-  tag: string;
-  tagType: "primary" | "success" | "warning" | "danger" | "info";
-  time: string;
-  done: boolean;
-}
-
-const todoItems: TodoItem[] = [
-  {
-    id: 1,
-    title: "审批：张三提交的请假申请",
-    tag: "审批",
-    tagType: "warning",
-    time: "10分钟前",
-    done: false,
-  },
-  {
-    id: 2,
-    title: "审核：新用户注册信息核实",
-    tag: "审核",
-    tagType: "primary",
-    time: "30分钟前",
-    done: false,
-  },
-  {
-    id: 3,
-    title: "发布：系统维护通知公告",
-    tag: "通知",
-    tagType: "info",
-    time: "1小时前",
-    done: false,
-  },
-  {
-    id: 4,
-    title: "处理：工单 #TSK-20240509",
-    tag: "工单",
-    tagType: "danger",
-    time: "2小时前",
-    done: false,
-  },
-  {
-    id: 5,
-    title: "更新：用户角色权限配置",
-    tag: "配置",
-    tagType: "success",
-    time: "昨天 15:30",
-    done: true,
-  },
-];
-
-interface Activity {
-  id: number;
-  content: string;
-  time: string;
-  color: "blue" | "green" | "orange" | "purple" | "grey";
-}
-
-const activities: Activity[] = [
-  { id: 1, content: "管理员 admin 登录系统", time: "3分钟前", color: "blue" },
-  { id: 2, content: "新增用户李四，角色为普通用户", time: "25分钟前", color: "green" },
-  { id: 3, content: "系统配置项「登录策略」已更新", time: "1小时前", color: "orange" },
-  { id: 4, content: "数据库自动备份任务执行完成", time: "3小时前", color: "purple" },
-  { id: 5, content: "角色权限批量修改：运营组新增导出权限", time: "昨天 16:42", color: "orange" },
-  { id: 6, content: "SSL 证书已自动续期", time: "昨天 09:15", color: "green" },
-];
 
 const visitOverviewData = ref<VisitOverviewDetail>({
   todayUvCount: 0,
@@ -424,8 +378,6 @@ const pvGrowthText = computed(() => {
   const r = visitOverviewData.value.pvGrowthRate;
   return r == null ? "--" : formatGrowthRate(r);
 });
-const uvIsUp = computed(() => (visitOverviewData.value.uvGrowthRate || 0) > 0);
-const pvIsUp = computed(() => (visitOverviewData.value.pvGrowthRate || 0) > 0);
 
 const tUv = useTransition(
   computed(() => visitOverviewData.value.todayUvCount),
@@ -636,6 +588,20 @@ $radius: 10px;
   }
 }
 
+.dash-layout {
+  display: flex;
+  justify-content: space-between;
+
+  &-start {
+    flex: 3;
+    margin-right: 16px;
+  }
+
+  &-end {
+    flex: 2;
+  }
+}
+
 .dash-avatar {
   display: flex;
   flex-shrink: 0;
@@ -715,6 +681,49 @@ $radius: 10px;
   padding: 24px;
   @extend %card;
 
+  // 四种颜色变体
+  &__1 {
+    display: flex;
+    padding: 2px 8px;
+    color: #409eff;
+    background-color: rgba(64, 158, 255, 0.1);
+    border-radius: 4px;
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(64, 158, 255, 0.2);
+    }
+  }
+  &__2 {
+    display: flex;
+    padding: 2px 8px;
+    color: #67c23a;
+    background-color: rgba(103, 194, 58, 0.1);
+    border-radius: 4px;
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(103, 194, 58, 0.2);
+    }
+  }
+
+  &__3 {
+    display: flex;
+    padding: 2px 8px;
+    color: #e6a23c;
+    background-color: rgba(230, 162, 60, 0.1);
+    border-radius: 4px;
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(230, 162, 60, 0.2);
+    }
+  }
+
+  &__4 {
+    display: flex;
+    padding: 2px 8px;
+    color: #9059d6;
+    background-color: rgba(144, 89, 214, 0.1);
+    border-radius: 4px;
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(144, 89, 214, 0.2);
+    }
+  }
   &__icon {
     display: flex;
     flex-shrink: 0;
@@ -828,7 +837,7 @@ $radius: 10px;
 
 .dash-bottom {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: $gap;
 }
 
@@ -1015,6 +1024,283 @@ $radius: 10px;
   }
 }
 
+// ============================================================
+// AI 智能分析报告样式
+// ============================================================
+
+.ai-report {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-section {
+  background: var(--el-fill-color-lighter);
+  border-radius: 12px;
+  transition: all 0.2s;
+
+  &--conclusion {
+    background: linear-gradient(135deg, rgba(64, 158, 255, 0.05), rgba(64, 158, 255, 0.01));
+    border-left: 3px solid var(--el-color-primary);
+  }
+
+  &--warning {
+    background: linear-gradient(135deg, rgba(230, 162, 60, 0.05), rgba(230, 162, 60, 0.01));
+    border-left: 3px solid var(--el-color-warning);
+  }
+
+  &__header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 14px 20px 8px 20px;
+    border-bottom: 1px solid var(--el-border-color-lighter);
+  }
+
+  &__icon {
+    color: var(--el-text-color-secondary);
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--el-text-color-primary);
+  }
+
+  &__body {
+    padding: 16px 20px 20px 20px;
+  }
+}
+
+// 核心结论数据指标
+.conclusion-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--el-border-color-lighter);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 110px;
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    letter-spacing: -0.01em;
+
+    &--primary {
+      font-size: 26px;
+      color: var(--el-color-primary);
+    }
+  }
+
+  .stat-trend {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--el-color-success);
+  }
+}
+
+.conclusion-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--el-text-color-regular);
+
+  strong {
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+  }
+
+  .trend-up {
+    font-weight: 600;
+    color: var(--el-color-success);
+  }
+}
+
+// 注意事项列表
+.warning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.warning-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--el-text-color-regular);
+
+  .warning-icon {
+    flex-shrink: 0;
+    color: var(--el-color-warning);
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+  }
+
+  .warning-value {
+    font-weight: 600;
+    color: var(--el-color-danger);
+  }
+}
+
+// ============================================================
+// 部门完成进度 Top 5 样式
+// ============================================================
+
+.dash-progress {
+  height: 100%;
+}
+
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.progress-item {
+  &__info {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  .dept-name {
+    font-weight: 500;
+    color: var(--el-text-color-primary);
+  }
+
+  .dept-percent {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--el-text-color-secondary);
+    letter-spacing: -0.2px;
+  }
+
+  .progress-bar-bg {
+    height: 6px;
+    overflow: hidden;
+    background-color: var(--el-fill-color-light);
+    border-radius: 10px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+
+    &.fill-high {
+      background: linear-gradient(90deg, #67c23a, #95d475);
+    }
+    &.fill-mid {
+      background: linear-gradient(90deg, #409eff, #79bbff);
+    }
+    &.fill-low {
+      background: linear-gradient(90deg, #e6a23c, #f5d18b);
+    }
+  }
+}
+
+// 让卡片标题里的图标与文字对齐
+.title-icon {
+  margin-right: 6px;
+  font-size: 16px;
+  vertical-align: middle;
+}
+// ============================================================
+// 近期动态卡片样式（类表格布局）
+// ============================================================
+
+.card__body--no-padding {
+  padding: 0;
+}
+
+.event-list {
+  font-size: 13px;
+
+  &__header,
+  &__row {
+    display: grid;
+    grid-template-columns: 100px 100px 1fr 160px 80px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 20px;
+  }
+
+  &__header {
+    font-weight: 500;
+    color: var(--el-text-color-secondary);
+    background-color: var(--el-fill-color-lighter);
+    border-bottom: 1px solid var(--el-border-color-lighter);
+  }
+
+  &__row {
+    border-bottom: 1px solid var(--el-border-color-lighter);
+    transition: background 0.2s;
+
+    &:hover {
+      background-color: var(--el-fill-color-light);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .col-dept,
+  .col-type,
+  .col-target,
+  .col-time,
+  .col-status {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .col-dept {
+    font-weight: 500;
+    color: var(--el-text-color-primary);
+  }
+
+  .col-target {
+    color: var(--el-text-color-regular);
+  }
+
+  .col-time {
+    font-size: 12px;
+    color: var(--el-text-color-placeholder);
+  }
+}
+
+// 响应式：在小屏幕下变成可滚动区域
+@media (max-width: 992px) {
+  .event-list {
+    overflow-x: auto;
+
+    &__header,
+    &__row {
+      min-width: 700px;
+    }
+  }
+}
 // ============================================================
 // Responsive
 // ============================================================

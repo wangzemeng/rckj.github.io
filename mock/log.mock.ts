@@ -192,10 +192,10 @@ export default defineMock([
     body: {
       code: "00000",
       data: {
-        todayUvCount: 169,
+        todayUvCount: 42,
         totalUvCount: 19985,
         uvGrowthRate: -0.57,
-        todayPvCount: 1629,
+        todayPvCount: 31,
         totalPvCount: 286086,
         pvGrowthRate: -0.65,
       },

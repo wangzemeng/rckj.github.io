@@ -9,7 +9,7 @@ export default defineMock([
       data: [
         {
           value: "1",
-          label: "有来技术",
+          label: "荣世科技",
           children: [
             {
               value: "2",
@@ -35,7 +35,7 @@ export default defineMock([
         {
           id: "1",
           parentId: "0",
-          name: "有来技术",
+          name: "荣世科技",
           code: "YOULAI",
           sort: 1,
           status: 1,
@@ -128,7 +128,7 @@ export default defineMock([
 const deptMap: Record<string, any> = {
   1: {
     id: "1",
-    name: "有来技术",
+    name: "荣世科技",
     code: "YOULAI",
     parentId: "0",
     status: 1,
