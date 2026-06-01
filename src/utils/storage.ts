@@ -1,14 +1,5 @@
 import { STORAGE_KEYS, APP_PREFIX } from "@/constants";
 
-/**
- * 存储工具类
- *
- * @description
- * 提供 localStorage 和 sessionStorage 的统一操作接口
- * 支持自动 JSON 序列化/反序列化
- *
- * @author 有来技术团队
- */
 export class Storage {
   // ==================== localStorage 操作 ====================
 

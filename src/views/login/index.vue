@@ -14,35 +14,6 @@
     </div>
 
     <div class="login-page__body">
-      <section class="login-hero">
-        <div class="login-hero__badge">
-          <span class="login-hero__dot" />
-          Enterprise Ready
-        </div>
-        <h1 class="login-hero__title">企业级管理系统</h1>
-        <p class="login-hero__subtitle">
-          提供安全、高效、可扩展的管理解决方案，助力企业数字化转型与业务增长。
-        </p>
-        <ul class="login-hero__features">
-          <li>
-            <span>✓</span>
-            统一身份认证与权限管理
-          </li>
-          <li>
-            <span>✓</span>
-            支持多租户模式与租户隔离
-          </li>
-          <li>
-            <span>✓</span>
-            数据安全与操作审计
-          </li>
-          <li>
-            <span>✓</span>
-            灵活扩展与高可用架构
-          </li>
-        </ul>
-      </section>
-
       <section class="login-card">
         <div class="login-card__brand">
           <div class="login-card__logo-wrap">
@@ -203,7 +174,7 @@ import type { LoginRequest } from "@/api/auth";
 import router from "@/router";
 import { useUserStore } from "@/stores";
 import { AuthStorage } from "@/utils/auth";
-import logo from "@/assets/images/logo.png";
+import logo from "@/assets/images/logo.ico";
 import { appConfig } from "@/settings";
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue";
 

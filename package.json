@@ -1,12 +1,12 @@
 {
-  "name": "vue3-element-admin",
-  "description": "Vue3 + Vite + TypeScript + Element-Plus 的后台管理模板，vue-element-admin 的 Vue3 版本",
-  "version": "4.6.1",
+  "name": "荣世科技",
+  "description": "荣世科技智慧指标评价系统",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
@@ -55,8 +55,10 @@
     "codemirror": "^5.65.16",
     "codemirror-editor-vue3": "^2.8.0",
     "echarts": "^6.0.0",
-    "element-plus": "^2.13.6",
+    "element-plus": "^2.14.1",
     "exceljs": "^4.4.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lodash-es": "^4.17.23",
     "nprogress": "^0.2.0",
     "path-browserify": "^1.0.1",
@@ -68,6 +70,7 @@
     "vue-draggable-plus": "^0.6.1",
     "vue-i18n": "^11.3.0",
     "vue-router": "^5.0.3",
+    "vuedraggable": "^2.24.3",
     "vxe-table": "~4.6.25"
   },
   "devDependencies": {

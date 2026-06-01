@@ -1,6 +1,6 @@
 <div align="center">
 
-<img alt="vue3-element-admin" width="80" src="./src/assets/images/logo.png">
+<img alt="vue3-element-admin" width="80" src="./src/assets/images/logo.ico">
 
 # vue3-element-admin
 
