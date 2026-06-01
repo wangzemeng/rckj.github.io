@@ -7,7 +7,106 @@ const MENU_BASE_URL = "/api/v1/menus";
 const MenuAPI = {
   /** 获取当前用户的路由列表 */
   getRoutes() {
-    return request<unknown, RouteItem[]>({ url: `${MENU_BASE_URL}/routes`, method: "get" });
+    return [
+      {
+        path: "/indicatorList",
+        component: "Layout",
+        redirect: "/indicatorList/index",
+        name: "/indicatorList",
+
+        children: [
+          {
+            path: "index",
+            name: "IndicatorList",
+            component: "indicatorList/index",
+            meta: {
+              title: "指标中心",
+              icon: "document",
+              hidden: false,
+              alwaysShow: false,
+              params: null,
+            },
+          },
+        ],
+      },
+
+      {
+        path: "/aiScorePage",
+        component: "Layout",
+        redirect: "/aiScorePage/index",
+        name: "/aiScorePage",
+
+        children: [
+          {
+            path: "index",
+            name: "AiScorePage",
+            component: "aiScorePage/index",
+            meta: {
+              title: "AI评分报告",
+              icon: "dict",
+              hidden: false,
+              alwaysShow: false,
+              params: null,
+            },
+          },
+        ],
+      },
+
+      {
+        path: "/system",
+        component: "Layout",
+        redirect: "/system/user",
+        name: "/system",
+        meta: {
+          title: "系统管理",
+          icon: "system",
+          hidden: false,
+          alwaysShow: false,
+          params: null,
+        },
+        children: [
+          {
+            path: "user",
+            component: "system/user/index",
+            name: "User",
+            meta: {
+              title: "用户管理",
+              icon: "el-icon-User",
+              hidden: false,
+              keepAlive: true,
+              alwaysShow: false,
+              params: null,
+            },
+          },
+          {
+            path: "role",
+            component: "system/role/index",
+            name: "Role",
+            meta: {
+              title: "角色管理",
+              icon: "role",
+              hidden: false,
+              keepAlive: true,
+              alwaysShow: false,
+              params: null,
+            },
+          },
+          {
+            path: "department",
+            component: "system/department/index",
+            name: "Department",
+            meta: {
+              title: "部门管理",
+              icon: "tree",
+              hidden: false,
+              keepAlive: true,
+              alwaysShow: false,
+              params: null,
+            },
+          },
+        ],
+      },
+    ];
   },
   /** 获取菜单树形列表 */
   getList(queryParams: MenuQueryParams) {
