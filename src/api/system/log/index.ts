@@ -21,18 +21,31 @@ const LogAPI = {
 
   /** 获取访问趋势统计 */
   getVisitTrend(queryParams: VisitTrendQueryParams) {
-    return request<unknown, VisitTrendDetail>({
-      url: `${LOG_BASE_URL}/analytics/trend`,
-      method: "get",
-      params: queryParams,
+    return Promise.resolve<VisitTrendDetail>({
+      dates: [
+        "2024-06-30",
+        "2024-07-01",
+        "2024-07-02",
+        "2024-07-03",
+        "2024-07-04",
+        "2024-07-05",
+        "2024-07-06",
+        "2024-07-07",
+      ],
+      pvList: [1751, 5168, 4882, 5301, 4721, 4885, 1901, 1003],
+      uvList: [207, 566, 565, 631, 579, 496, 222, 152],
     });
   },
 
   /** 获取访问概览统计 */
   getVisitOverview() {
-    return request<unknown, VisitOverviewDetail>({
-      url: `${LOG_BASE_URL}/analytics/overview`,
-      method: "get",
+    return Promise.resolve<VisitOverviewDetail>({
+      todayUvCount: 42,
+      totalUvCount: 19985,
+      uvGrowthRate: -0.57,
+      todayPvCount: 31,
+      totalPvCount: 286086,
+      pvGrowthRate: -0.65,
     });
   },
 };
