@@ -12,7 +12,7 @@
       </el-button>
     </div>
 
-    <!-- 统计卡片（紧凑） -->
+    <!-- 统计卡片 -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value">{{ stats.totalDepts }}</div>
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <!-- 各部门填报详情（横向卡片） -->
+    <!-- 各部门填报详情 -->
     <div class="section-header">
       <h3 class="section-title">各部门填报详情</h3>
     </div>
@@ -47,7 +47,7 @@
           <el-tag v-else type="success" size="small">已完成</el-tag>
         </div>
         <div class="dept-card-body">
-          <!-- AI评分（居中显示） -->
+          <!-- AI评分（仅已提交部门显示） -->
           <div v-if="dept.status === 'submitted'" class="score-center">
             <div class="score-value">
               {{ dept.score }}
@@ -68,32 +68,41 @@
               <p>{{ dept.aiComment }}</p>
             </div>
           </template>
-          <!-- 待提交/未填报部门：提示信息 -->
+          <!-- 未填报部门：提示信息 -->
           <div v-else class="status-message danger">
             <el-icon><CircleCloseFilled /></el-icon>
             <span>未开始填报，需立即督办</span>
           </div>
         </div>
         <div class="dept-card-footer">
-          <el-button link type="primary" size="small" @click="gotoDeptDetail(dept)">
+          <el-button
+            v-if="dept.status === 'submitted'"
+            link
+            type="primary"
+            size="small"
+            @click="gotoDeptDetail(dept)"
+          >
             查看详情
+          </el-button>
+          <el-button v-else link type="warning" size="small" @click="handleUrge(dept)">
+            催办
           </el-button>
         </div>
       </div>
     </div>
 
-    <!-- AI 智能比对分析（拆分为两个独立区域） -->
+    <!-- AI 智能比对分析 -->
     <div class="section-header">
       <h3 class="section-title">AI 智能比对分析</h3>
     </div>
-    <!-- 核心发现区域 -->
+    <!-- 核心发现 -->
     <div class="core-findings-card">
       <h4>核心发现</h4>
       <ul>
         <li v-for="(finding, idx) in coreFindings" :key="idx">{{ finding }}</li>
       </ul>
     </div>
-    <!-- 部门得分对比区域 -->
+    <!-- 部门得分对比（未填报部门得分显示为—） -->
     <div class="score-compare-card">
       <h4>部门得分对比</h4>
       <el-table :data="scoreTableData" border stripe size="small" class="score-table">
@@ -132,6 +141,14 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+import {
+  ArrowLeft,
+  Document,
+  CircleCloseFilled,
+  Warning,
+  Opportunity,
+} from "@element-plus/icons-vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -143,7 +160,6 @@ const status = (route.query.status as string) || "已发布";
 const statusText = computed(() => status);
 const statusTagType = computed(() => (status === "已发布" ? "success" : "info"));
 
-// 统计数据
 const stats = ref({
   totalDepts: 4,
   submittedDepts: 2,
@@ -160,7 +176,6 @@ interface Department {
   aiComment?: string;
 }
 
-// 部门数据（示例）
 const departments = ref<Department[]>([
   {
     id: "1",
@@ -175,6 +190,7 @@ const departments = ref<Department[]>([
     id: "2",
     name: "立法办",
     status: "not_started",
+    // 注意：这里有分数数据，但状态为未填报，不应显示
     score: 92.1,
     aiComment: "大部分数据已填报，尚缺部分佐证材料。立法目标完成率较高，建议尽快补充缺失文件。",
   },
@@ -193,10 +209,11 @@ const departments = ref<Department[]>([
   },
 ]);
 
+// 修正表格数据：未填报的部门得分显示为 null
 const scoreTableData = computed(() => {
   return departments.value.map((dept) => ({
     name: dept.name,
-    score: dept.score,
+    score: dept.status === "submitted" ? dept.score : null,
     status: dept.status === "submitted" ? "已完成" : "未填报",
   }));
 });
@@ -231,6 +248,10 @@ const gotoDeptDetail = (dept: Department) => {
       deptName: dept.name,
     },
   });
+};
+
+const handleUrge = (dept: Department) => {
+  ElMessage.success(`已向 ${dept.name} 发送催办通知`);
 };
 </script>
 
@@ -407,13 +428,6 @@ const gotoDeptDetail = (dept: Department) => {
       margin: 12px 0;
       font-size: 13px;
       border-radius: 12px;
-      &.warning {
-        color: #b45309;
-        background: #fef9e6;
-        .el-icon {
-          color: #e6a23c;
-        }
-      }
       &.danger {
         color: #c2410c;
         background: #fef2f2;

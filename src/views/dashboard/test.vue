@@ -123,7 +123,7 @@ const dateRange = ref(["2026-01-01", "2026-06-02"]);
 const updateTime = ref("2026-06-02 11:00");
 
 const stats = ref({
-  totalCount: 87.5,
+  totalCount: 87,
   totalTrend: 12,
   passRate: 85.6,
   passTrend: 5,

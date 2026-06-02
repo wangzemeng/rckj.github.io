@@ -1,6 +1,6 @@
 <template>
   <div class="dept-manage">
-    <!-- 操作栏：包含搜索框和新建按钮 -->
+    <!-- 操作栏 -->
     <div class="action-bar">
       <el-input
         v-model="searchKeyword"
@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <!-- 部门类型分组（过滤后） -->
+    <!-- 部门类型分组 -->
     <div v-for="type in filteredDepartmentTypes" :key="type.id" class="type-group">
       <div class="group-header">
         <div class="group-title">
@@ -77,7 +77,7 @@
       </el-table>
     </div>
 
-    <!-- 部门类型弹窗（新建/编辑） -->
+    <!-- 部门类型弹窗 -->
     <el-dialog
       v-model="typeDialogVisible"
       :title="typeDialogTitle"
@@ -101,7 +101,7 @@
       </template>
     </el-dialog>
 
-    <!-- 部门弹窗（新建/编辑） -->
+    <!-- 部门弹窗 -->
     <el-dialog
       v-model="deptDialogVisible"
       :title="deptDialogTitle"
@@ -154,7 +154,7 @@
       </template>
     </el-dialog>
 
-    <!-- 部门详情弹窗（只读） -->
+    <!-- 部门详情弹窗 -->
     <el-dialog v-model="detailVisible" title="部门详情" width="500px">
       <el-descriptions :column="1" border>
         <el-descriptions-item label="部门名称">{{ detailDept.name }}</el-descriptions-item>
@@ -183,7 +183,6 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import { FolderAdd, Plus, Edit, Delete, Search } from "@element-plus/icons-vue";
 
-// 类型定义
 interface DepartmentType {
   id: string;
   name: string;
@@ -199,47 +198,37 @@ interface Department {
   createTime?: string;
 }
 
-// 数据存储key
 const STORAGE_KEY_TYPES = "department_types";
 const STORAGE_KEY_DEPTS = "departments";
 
-// 主管理账号
 const mainAccount = reactive({
   name: "省人大常委会办公厅",
   account: "srd_bgst",
   status: "启用",
 });
 
-// 部门类型列表
 const departmentTypes = ref<DepartmentType[]>([]);
-// 部门列表
 const departments = ref<Department[]>([]);
-// 搜索关键词
 const searchKeyword = ref("");
-
-// 默认密码
 const defaultPassword = "Rdx#2024@pLm";
 
-// 辅助函数
+// 保存数据到 localStorage
 const saveData = () => {
   localStorage.setItem(STORAGE_KEY_TYPES, JSON.stringify(departmentTypes.value));
   localStorage.setItem(STORAGE_KEY_DEPTS, JSON.stringify(departments.value));
 };
 
-const loadData = () => {
-  const storedTypes = localStorage.getItem(STORAGE_KEY_TYPES);
-  if (storedTypes) {
-    departmentTypes.value = JSON.parse(storedTypes);
-  } else {
+// 初始化默认数据（确保有数据显示）
+const initDefaultData = () => {
+  // 检查部门类型数据，如果为空则插入默认类型
+  if (departmentTypes.value.length === 0) {
     departmentTypes.value = [
       { id: "1", name: "省政府" },
       { id: "2", name: "财政类" },
     ];
   }
-  const storedDepts = localStorage.getItem(STORAGE_KEY_DEPTS);
-  if (storedDepts) {
-    departments.value = JSON.parse(storedDepts);
-  } else {
+  // 检查部门数据，如果为空则插入默认部门
+  if (departments.value.length === 0) {
     departments.value = [
       {
         id: "101",
@@ -306,9 +295,41 @@ const loadData = () => {
       },
     ];
   }
+  // 将默认数据保存到 localStorage
+  saveData();
 };
 
-// 过滤部门类型（有部门或本身匹配搜索）
+const loadData = () => {
+  const storedTypes = localStorage.getItem(STORAGE_KEY_TYPES);
+  const storedDepts = localStorage.getItem(STORAGE_KEY_DEPTS);
+
+  if (storedTypes) {
+    try {
+      departmentTypes.value = JSON.parse(storedTypes);
+    } catch {
+      departmentTypes.value = [];
+    }
+  } else {
+    departmentTypes.value = [];
+  }
+
+  if (storedDepts) {
+    try {
+      departments.value = JSON.parse(storedDepts);
+    } catch {
+      departments.value = [];
+    }
+  } else {
+    departments.value = [];
+  }
+
+  // 如果数据为空，则初始化默认数据
+  if (departmentTypes.value.length === 0 || departments.value.length === 0) {
+    initDefaultData();
+  }
+};
+
+// 过滤部门类型
 const filteredDepartmentTypes = computed(() => {
   if (!searchKeyword.value) return departmentTypes.value;
   return departmentTypes.value.filter((type) => {
@@ -317,7 +338,6 @@ const filteredDepartmentTypes = computed(() => {
   });
 });
 
-// 获取某类型下过滤后的部门
 const getFilteredDepartments = (typeId: string) => {
   let depts = departments.value.filter((d) => d.typeId === typeId);
   if (searchKeyword.value) {
@@ -326,14 +346,10 @@ const getFilteredDepartments = (typeId: string) => {
   return depts;
 };
 
-const getDeptCount = (typeId: string) => {
-  return departments.value.filter((d) => d.typeId === typeId).length;
-};
-
-const getTypeName = (typeId: string) => {
-  const type = departmentTypes.value.find((t) => t.id === typeId);
-  return type ? type.name : "未知";
-};
+const getDeptCount = (typeId: string) =>
+  departments.value.filter((d) => d.typeId === typeId).length;
+const getTypeName = (typeId: string) =>
+  departmentTypes.value.find((t) => t.id === typeId)?.name || "未知";
 
 // 部门类型弹窗
 const typeDialogVisible = ref(false);
@@ -352,7 +368,6 @@ const openCreateTypeDialog = () => {
   typeForm.name = "";
   typeDialogVisible.value = true;
 };
-
 const openEditTypeDialog = (type: DepartmentType) => {
   isEditTypeMode = true;
   typeDialogTitle.value = "编辑部门类型";
@@ -360,7 +375,6 @@ const openEditTypeDialog = (type: DepartmentType) => {
   typeForm.name = type.name;
   typeDialogVisible.value = true;
 };
-
 const saveDepartmentType = async () => {
   if (!typeFormRef.value) return;
   await typeFormRef.value.validate((valid) => {
@@ -379,7 +393,6 @@ const saveDepartmentType = async () => {
     typeDialogVisible.value = false;
   });
 };
-
 const deleteDepartmentType = (type: DepartmentType) => {
   if (getDeptCount(type.id) > 0) {
     ElMessage.warning(`该分类下还有部门，请先删除或转移部门`);
@@ -400,7 +413,6 @@ const deleteDepartmentType = (type: DepartmentType) => {
     })
     .catch(() => {});
 };
-
 const resetTypeForm = () => {
   typeForm.id = "";
   typeForm.name = "";
@@ -431,9 +443,7 @@ const autoGenerateAccount = () => {
     return;
   }
   const now = new Date();
-  const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(
-    now.getDate()
-  ).padStart(2, "0")}`;
+  const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
   let seq = 1;
   let newAccount = `dept_${dateStr}_${String(seq).padStart(3, "0")}`;
   while (departments.value.some((d) => d.account === newAccount)) {
@@ -454,7 +464,6 @@ const openCreateDeptDialog = () => {
   deptForm.status = "启用";
   deptDialogVisible.value = true;
 };
-
 const openEditDeptDialog = (dept: Department) => {
   isEditMode = true;
   deptDialogTitle.value = "编辑部门";
@@ -466,7 +475,6 @@ const openEditDeptDialog = (dept: Department) => {
   deptForm.status = dept.status;
   deptDialogVisible.value = true;
 };
-
 const saveDepartment = async () => {
   if (!deptFormRef.value) return;
   await deptFormRef.value.validate((valid) => {
@@ -508,7 +516,6 @@ const saveDepartment = async () => {
     deptDialogVisible.value = false;
   });
 };
-
 const deleteDepartment = (dept: Department) => {
   ElMessageBox.confirm(`确定删除部门“${dept.name}”吗？`, "提示", {
     confirmButtonText: "确定",
@@ -525,7 +532,6 @@ const deleteDepartment = (dept: Department) => {
     })
     .catch(() => {});
 };
-
 const resetDeptForm = () => {
   deptForm.id = "";
   deptForm.typeId = "";
@@ -550,12 +556,12 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+/* 样式保持不变 */
 .dept-manage {
   min-height: 100%;
   padding: 24px;
   background: var(--el-bg-color-page);
 }
-
 .action-bar {
   display: flex;
   flex-wrap: wrap;
@@ -568,7 +574,6 @@ onMounted(() => {
     gap: 12px;
   }
 }
-
 .main-account-card {
   padding: 20px 24px;
   margin-bottom: 24px;
@@ -600,7 +605,6 @@ onMounted(() => {
     }
   }
 }
-
 .type-group {
   margin-bottom: 24px;
   overflow: hidden;
@@ -637,18 +641,15 @@ onMounted(() => {
     border-radius: 0;
   }
 }
-
 .status-text {
   margin-left: 8px;
   font-size: 12px;
 }
-
 .form-tip {
   margin-top: 4px;
   font-size: 12px;
   color: var(--el-text-color-secondary);
 }
-
 :deep(.el-dialog) {
   .el-dialog__body {
     padding: 20px;

@@ -44,7 +44,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="18">
+          <el-col :span="16">
             <el-form-item
               label="2026立法完成数量"
               prop="completedCount"
@@ -62,7 +62,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="完成率">
               <div class="completion-display">
                 <span class="rate-value">{{ completionRate }}%</span>

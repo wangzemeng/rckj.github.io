@@ -352,6 +352,14 @@ const deptTree = ref<DeptTreeNode[]>([]);
 const loadDeptTree = () => {
   const types: DepartmentType[] = JSON.parse(localStorage.getItem(DEPT_TYPES_KEY) || "[]");
   const depts: Department[] = JSON.parse(localStorage.getItem(DEPTS_KEY) || "[]");
+
+  // 如果没有部门数据，提示用户先去部门管理添加
+  if (types.length === 0) {
+    console.warn("暂无部门类型数据，请先在部门管理中添加");
+    deptTree.value = [];
+    return;
+  }
+
   const tree: DeptTreeNode[] = types.map((type) => ({
     id: type.id,
     label: type.name,
@@ -361,7 +369,6 @@ const loadDeptTree = () => {
   }));
   deptTree.value = tree.filter((node) => node.children && node.children.length > 0);
 };
-
 const getDepartmentNames = (deptIds: string[]): string => {
   if (!deptIds || deptIds.length === 0) return "—";
   const findName = (id: string): string => {
@@ -456,7 +463,7 @@ const getDefaultIndicators = (): IndicatorItem[] => {
       deadline: "2026-04-15",
       status: "草稿",
       templateId: "",
-      templateName: "",
+      templateName: "立法指标考核模板",
       deptIds: [],
       departmentNames: "—",
     },
