@@ -22,60 +22,74 @@ const UserAPI = {
    * @returns 登录用户昵称、头像信息，包括角色和权限
    */
   getInfo() {
-    return {
-      userId: "2",
-      username: "admin",
-      nickname: "系统管理员",
-      avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
-      roles: ["ADMIN"],
-      perms: [
-        "sys:user:list",
-        "sys:user:create",
-        "sys:user:update",
-        "sys:user:delete",
-        "sys:user:import",
-        "sys:user:export",
-        "sys:user:reset-password",
+    const currentUser = window.localStorage.getItem("currentUser");
+    return currentUser === "admin"
+      ? {
+          userId: "2",
+          username: "admin",
+          nickname: "系统管理员",
+          avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
+          roles: ["ADMIN"],
+          perms: [
+            "sys:user:list",
+            "sys:user:create",
+            "sys:user:update",
+            "sys:user:delete",
+            "sys:user:import",
+            "sys:user:export",
+            "sys:user:reset-password",
 
-        "sys:role:list",
-        "sys:role:create",
-        "sys:role:update",
-        "sys:role:delete",
+            "sys:role:list",
+            "sys:role:create",
+            "sys:role:update",
+            "sys:role:delete",
 
-        "sys:dept:list",
-        "sys:dept:create",
-        "sys:dept:update",
-        "sys:dept:delete",
+            "sys:dept:list",
+            "sys:dept:create",
+            "sys:dept:update",
+            "sys:dept:delete",
 
-        "sys:menu:list",
-        "sys:menu:create",
-        "sys:menu:update",
-        "sys:menu:delete",
+            "sys:menu:list",
+            "sys:menu:create",
+            "sys:menu:update",
+            "sys:menu:delete",
 
-        "sys:dict:list",
-        "sys:dict:create",
-        "sys:dict:update",
-        "sys:dict:delete",
+            "sys:dict:list",
+            "sys:dict:create",
+            "sys:dict:update",
+            "sys:dict:delete",
 
-        "sys:dict-item:list",
-        "sys:dict-item:create",
-        "sys:dict-item:update",
-        "sys:dict-item:delete",
+            "sys:dict-item:list",
+            "sys:dict-item:create",
+            "sys:dict-item:update",
+            "sys:dict-item:delete",
 
-        "sys:notice:list",
-        "sys:notice:create",
-        "sys:notice:update",
-        "sys:notice:delete",
-        "sys:notice:revoke",
-        "sys:notice:publish",
+            "sys:notice:list",
+            "sys:notice:create",
+            "sys:notice:update",
+            "sys:notice:delete",
+            "sys:notice:revoke",
+            "sys:notice:publish",
 
-        "sys:config:list",
-        "sys:config:create",
-        "sys:config:update",
-        "sys:config:delete",
-        "sys:config:refresh",
-      ],
-    };
+            "sys:config:list",
+            "sys:config:create",
+            "sys:config:update",
+            "sys:config:delete",
+            "sys:config:refresh",
+          ],
+        }
+      : {
+          id: "3",
+          username: "test",
+          nickname: "部门管理员",
+          mobile: "17621210366",
+          gender: 1,
+          avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
+          email: "youlaitech@163.com",
+          status: 1,
+          deptId: "3",
+          roleIds: [4],
+        };
   },
 
   /**
@@ -84,11 +98,40 @@ const UserAPI = {
    * @param queryParams 查询参数
    */
   getPage(queryParams: UserQueryParams) {
-    return request<unknown, PageResult<UserItem>>({
-      url: `${USER_BASE_URL}`,
-      method: "get",
-      params: queryParams,
+    return Promise.resolve({
+      list: [
+        {
+          id: "2",
+          username: "admin",
+          nickname: "系统管理员",
+          mobile: "17621210366",
+          gender: 1,
+          avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
+          email: "",
+          status: 1,
+          deptId: "1",
+          roleIds: [2],
+        },
+        {
+          id: "3",
+          username: "test",
+          nickname: "部门管理员",
+          mobile: "17621210366",
+          gender: 1,
+          avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
+          email: "youlaitech@163.com",
+          status: 1,
+          deptId: "3",
+          roleIds: [4],
+        },
+      ],
+      total: 2,
     });
+    // return request<unknown, PageResult<UserItem>>({
+    //   url: `${USER_BASE_URL}`,
+    //   method: "get",
+    //   params: queryParams,
+    // });
   },
 
   /**

@@ -15,7 +15,23 @@ const DeptAPI = {
   },
   /** 获取部门下拉数据源 */
   getOptions() {
-    return request<unknown, OptionItem[]>({ url: `${DEPT_BASE_URL}/options`, method: "get" });
+    return Promise.resolve<OptionItem[]>([
+      {
+        value: "1",
+        label: "荣世科技",
+        children: [
+          {
+            value: "2",
+            label: "研发部门",
+          },
+          {
+            value: "3",
+            label: "测试部门",
+          },
+        ],
+      },
+    ]);
+    // return request<unknown, OptionItem[]>({ url: `${DEPT_BASE_URL}/options`, method: "get" });
   },
   /** 获取部门表单数据 */
   getFormData(id: string) {

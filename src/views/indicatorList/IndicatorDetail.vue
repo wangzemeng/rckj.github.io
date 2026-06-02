@@ -2,14 +2,14 @@
   <div class="detail-page">
     <!-- 头部 -->
     <div class="detail-header">
-      <el-button link class="back-btn" @click="goBack">
-        <el-icon><ArrowLeft /></el-icon>
-        返回
-      </el-button>
       <div class="title-group">
         <h2 class="title">{{ indicatorName }}</h2>
         <el-tag :type="statusTagType" size="large">{{ statusText }}</el-tag>
       </div>
+      <el-button link class="back-btn" @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
     </div>
 
     <!-- 统计卡片（紧凑） -->
@@ -43,10 +43,7 @@
       <div v-for="dept in departments" :key="dept.id" class="dept-card">
         <div class="dept-card-header">
           <span class="dept-name">{{ dept.name }}</span>
-          <el-tag v-if="dept.status === 'pending'" type="warning" size="small">待提交</el-tag>
-          <el-tag v-else-if="dept.status === 'not_started'" type="danger" size="small">
-            未填报
-          </el-tag>
+          <el-tag v-if="dept.status === 'not_started'" type="danger" size="small">未填报</el-tag>
           <el-tag v-else type="success" size="small">已完成</el-tag>
         </div>
         <div class="dept-card-body">
@@ -72,10 +69,6 @@
             </div>
           </template>
           <!-- 待提交/未填报部门：提示信息 -->
-          <div v-else-if="dept.status === 'pending'" class="status-message warning">
-            <el-icon><WarningFilled /></el-icon>
-            <span>等待提交，缺少关键材料</span>
-          </div>
           <div v-else class="status-message danger">
             <el-icon><CircleCloseFilled /></el-icon>
             <span>未开始填报，需立即督办</span>
@@ -139,14 +132,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import {
-  ArrowLeft,
-  Document,
-  WarningFilled,
-  CircleCloseFilled,
-  Warning,
-  Opportunity,
-} from "@element-plus/icons-vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -169,7 +154,7 @@ const stats = ref({
 interface Department {
   id: string;
   name: string;
-  status: "submitted" | "pending" | "not_started";
+  status: "submitted" | "not_started";
   score?: number;
   files?: { name: string }[];
   aiComment?: string;
@@ -189,7 +174,7 @@ const departments = ref<Department[]>([
   {
     id: "2",
     name: "立法办",
-    status: "pending",
+    status: "not_started",
     score: 92.1,
     aiComment: "大部分数据已填报，尚缺部分佐证材料。立法目标完成率较高，建议尽快补充缺失文件。",
   },
@@ -212,8 +197,7 @@ const scoreTableData = computed(() => {
   return departments.value.map((dept) => ({
     name: dept.name,
     score: dept.score,
-    status:
-      dept.status === "submitted" ? "已完成" : dept.status === "pending" ? "待提交" : "未填报",
+    status: dept.status === "submitted" ? "已完成" : "未填报",
   }));
 });
 

@@ -74,6 +74,11 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
 
   {
+    path: "/dept-detail",
+    name: "DeptMDetail",
+    component: () => import("@/views/indicatorList/DeptMDetail.vue"),
+  },
+  {
     path: "/indicator-detail",
     name: "IndicatorDetail",
     component: () => import("@/views/indicatorList/IndicatorDetail.vue"),

@@ -4,9 +4,8 @@
       <el-tabs v-model="activeTab" class="indicator-tabs">
         <!-- 指标列表 Tab -->
         <el-tab-pane label="指标列表" name="indicator">
-          <!-- 列表视图（非详情模式） -->
+          <!-- 列表视图 -->
           <div v-if="!showDetail">
-            <!-- 搜索筛选栏 -->
             <div class="search-bar">
               <el-form inline>
                 <el-form-item label="指标名称">
@@ -17,22 +16,21 @@
                     :prefix-icon="Search"
                   />
                 </el-form-item>
-                <el-form-item style="width: 160px" label="指标模板">
-                  <el-select v-model="searchForm.templateId" placeholder="全部模板" clearable>
-                    <el-option label="全部" value="" />
-                    <el-option
-                      v-for="tpl in templates"
-                      :key="tpl.id"
-                      :label="tpl.name"
-                      :value="tpl.id"
-                    />
-                  </el-select>
+                <el-form-item style="width: 160px" label="发布日期">
+                  <el-date-picker
+                    v-model="searchForm.publishDate"
+                    type="date"
+                    placeholder="选择日期"
+                    value-format="YYYY-MM-DD"
+                    clearable
+                  />
                 </el-form-item>
                 <el-form-item style="width: 160px" label="全部状态">
-                  <el-select v-model="searchForm.status" placeholder="全部状态">
+                  <el-select v-model="searchForm.status" placeholder="全部状态" clearable>
                     <el-option label="全部" value="" />
                     <el-option label="已发布" value="已发布" />
                     <el-option label="草稿" value="草稿" />
+                    <el-option label="已完成" value="已完成" />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -40,7 +38,6 @@
                   <el-button @click="resetSearch">重置</el-button>
                 </el-form-item>
 
-                <!-- 新建指标按钮（仅在指标列表 Tab 且非详情模式下显示） -->
                 <el-button
                   v-if="activeTab === 'indicator' && !showDetail"
                   class="new-btn"
@@ -53,15 +50,14 @@
               </el-form>
             </div>
 
-            <!-- 指标表格 -->
             <el-table :data="filteredTableData" stripe style="width: 100%">
-              <el-table-column prop="name" label="指标名称" min-width="150" />
-              <el-table-column prop="templateName" label="指标模板" width="150">
+              <el-table-column prop="indicatorCode" label="指标编号" width="140" />
+              <el-table-column prop="name" label="指标名称" min-width="180" />
+              <el-table-column prop="publishDate" label="发布日期" width="120">
                 <template #default="{ row }">
-                  {{ row.templateName || "未关联" }}
+                  {{ row.publishDate || "—" }}
                 </template>
               </el-table-column>
-              <el-table-column prop="department" label="适用部门" width="140" />
               <el-table-column prop="deadline" label="截止日期" width="120" />
               <el-table-column prop="status" label="状态" width="100">
                 <template #default="{ row }">
@@ -70,7 +66,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="260" fixed="right">
+              <el-table-column label="操作" width="300" fixed="right">
                 <template #default="{ row }">
                   <el-button link type="primary" size="small" @click="handleDetail(row)">
                     详情
@@ -86,12 +82,17 @@
                       发布
                     </el-button>
                   </template>
+                  <template v-else-if="row.status === '已发布'">
+                    <el-button link type="warning" size="small" @click="handleRecall(row)">
+                      撤回
+                    </el-button>
+                  </template>
                 </template>
               </el-table-column>
             </el-table>
           </div>
 
-          <!-- 详情视图（非弹窗，页面内切换） -->
+          <!-- 详情视图 -->
           <div v-else class="detail-view">
             <div class="detail-header">
               <el-button link class="back-btn" @click="backToList">
@@ -102,14 +103,14 @@
             </div>
             <div class="detail-content">
               <el-descriptions :column="2" border>
+                <el-descriptions-item label="指标编号">
+                  {{ currentDetail.indicatorCode }}
+                </el-descriptions-item>
                 <el-descriptions-item label="指标名称">
                   {{ currentDetail.name }}
                 </el-descriptions-item>
-                <el-descriptions-item label="关联模板">
-                  {{ currentDetail.templateName || "未关联" }}
-                </el-descriptions-item>
-                <el-descriptions-item label="适用部门">
-                  {{ currentDetail.department }}
+                <el-descriptions-item label="发布日期">
+                  {{ currentDetail.publishDate || "未发布" }}
                 </el-descriptions-item>
                 <el-descriptions-item label="截止日期">
                   {{ currentDetail.deadline }}
@@ -120,27 +121,11 @@
                   </span>
                 </el-descriptions-item>
               </el-descriptions>
-
-              <!-- 关联模板的自定义字段展示 -->
-              <div v-if="currentTemplateDetail" class="template-fields">
-                <h4>模板字段配置</h4>
-                <div
-                  v-for="field in currentTemplateDetail.fields"
-                  :key="field.id"
-                  class="field-item"
-                >
-                  <span class="field-label">{{ field.label || getFieldTypeName(field.type) }}</span>
-                  <span class="field-type">（{{ getFieldTypeName(field.type) }}）</span>
-                </div>
-                <div v-if="!currentTemplateDetail.fields.length" class="empty-tip">
-                  暂无自定义字段
-                </div>
-              </div>
             </div>
           </div>
         </el-tab-pane>
 
-        <!-- 模板列表 Tab（完整管理功能） -->
+        <!-- 模板列表 Tab -->
         <el-tab-pane label="模板列表" name="template">
           <div class="template-manager">
             <div class="template-header">
@@ -183,22 +168,6 @@
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
         <el-form-item label="指标名称" prop="name">
           <el-input v-model="formData.name" placeholder="请输入指标名称" />
-        </el-form-item>
-        <el-form-item label="选择模板" prop="templateId">
-          <el-select
-            v-model="formData.templateId"
-            placeholder="请选择模板"
-            style="width: 100%"
-            clearable
-          >
-            <el-option v-for="tpl in templates" :key="tpl.id" :label="tpl.name" :value="tpl.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="适用部门" prop="department">
-          <el-select v-model="formData.department" placeholder="请选择适用部门" style="width: 100%">
-            <el-option label="全部部门" value="全部部门" />
-            <el-option label="指定部门" value="指定部门" />
-          </el-select>
         </el-form-item>
         <el-form-item label="截止日期" prop="deadline">
           <el-date-picker
@@ -292,19 +261,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onActivated, watch } from "vue";
+import { ref, computed, onMounted, onActivated } from "vue";
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import { useRouter } from "vue-router";
-
+const router = useRouter();
 // ========== 类型定义 ==========
 interface IndicatorItem {
   id: number;
   name: string;
-  department: string;
+  indicatorCode: string;
+  publishDate: string;
   deadline: string;
-  status: "已发布" | "草稿";
-  templateId?: string;
-  templateName?: string;
+  status: "已发布" | "草稿" | "已完成";
 }
 
 interface TemplateField {
@@ -324,11 +292,26 @@ interface TemplateItem {
   updateTime: string;
 }
 
-const router = useRouter();
-
 // ========== 存储 KEY ==========
 const INDICATOR_STORAGE_KEY = "indicator_list_data";
 const TEMPLATE_STORAGE_KEY = "templates_list";
+const INDICATOR_COUNTER_KEY = "indicator_code_counter";
+
+// ========== 指标编号管理 ==========
+const getCurrentCounter = (): number => {
+  const stored = localStorage.getItem(INDICATOR_COUNTER_KEY);
+  if (stored) return parseInt(stored, 10);
+  return 0;
+};
+const updateCounter = (value: number) => {
+  localStorage.setItem(INDICATOR_COUNTER_KEY, value.toString());
+};
+const generateIndicatorCode = (): string => {
+  let counter = getCurrentCounter();
+  counter++;
+  updateCounter(counter);
+  return counter.toString().padStart(10, "0");
+};
 
 // ========== 模板数据 ==========
 const templates = ref<TemplateItem[]>([]);
@@ -352,64 +335,54 @@ const loadTemplates = () => {
 const saveTemplates = () => {
   localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(templates.value));
 };
-const getTemplateName = (templateId?: string) => {
-  if (!templateId) return "";
-  const tpl = templates.value.find((t) => t.id === templateId);
-  return tpl ? tpl.name : "";
-};
-const syncIndicatorTemplateNames = () => {
-  tableData.value.forEach((indicator) => {
-    if (indicator.templateId) {
-      const tpl = templates.value.find((t) => t.id === indicator.templateId);
-      indicator.templateName = tpl ? tpl.name : "";
-    } else {
-      indicator.templateName = "";
-    }
-  });
-  persistIndicators();
-};
 
 // ========== 指标数据 ==========
 const getDefaultIndicators = (): IndicatorItem[] => [
   {
     id: 1,
     name: "法规实施率",
-    department: "全部部门",
+    indicatorCode: "0000000001",
+    publishDate: "2026-03-02",
     deadline: "2026-03-31",
     status: "已发布",
-    templateId: "1",
-    templateName: "立法指标考核模板",
   },
   {
     id: 2,
     name: "预算执行率",
-    department: "全部部门",
+    indicatorCode: "0000000002",
+    publishDate: "2026-03-31",
     deadline: "2026-03-31",
     status: "已发布",
-    templateId: "1",
-    templateName: "立法指标考核模板",
   },
   {
     id: 3,
     name: "政务公开满意度",
-    department: "指定部门",
+    indicatorCode: "0000000003",
+    publishDate: "",
     deadline: "2026-04-15",
     status: "草稿",
-    templateId: "",
-    templateName: "",
   },
 ];
 
 const loadIndicators = (): IndicatorItem[] => {
   const stored = localStorage.getItem(INDICATOR_STORAGE_KEY);
+  let data: IndicatorItem[];
   if (stored) {
     try {
-      return JSON.parse(stored);
+      data = JSON.parse(stored);
     } catch {
-      return getDefaultIndicators();
+      data = getDefaultIndicators();
     }
+  } else {
+    data = getDefaultIndicators();
   }
-  return getDefaultIndicators();
+  // 修复：为已发布但缺少 publishDate 的指标补上默认日期
+  data.forEach((item) => {
+    if (item.status === "已发布" && !item.publishDate) {
+      item.publishDate = "2026-03-01";
+    }
+  });
+  return data;
 };
 
 const tableData = ref<IndicatorItem[]>(loadIndicators());
@@ -417,22 +390,38 @@ const persistIndicators = () => {
   localStorage.setItem(INDICATOR_STORAGE_KEY, JSON.stringify(tableData.value));
 };
 
-// 搜索
+const ensureIndicatorCodes = () => {
+  let maxCounter = getCurrentCounter();
+  tableData.value.forEach((item) => {
+    if (!item.indicatorCode || item.indicatorCode.length !== 10) {
+      maxCounter++;
+      item.indicatorCode = maxCounter.toString().padStart(10, "0");
+    } else {
+      const num = parseInt(item.indicatorCode, 10);
+      if (!isNaN(num) && num > maxCounter) maxCounter = num;
+    }
+    // 同时确保已发布的指标有发布日期
+    if (item.status === "已发布" && !item.publishDate) {
+      item.publishDate = "2026-03-01";
+    }
+  });
+  updateCounter(maxCounter);
+  persistIndicators();
+};
+
 const searchForm = ref({
   name: "",
-  templateId: "",
+  publishDate: "",
   status: "",
 });
 
 const filteredTableData = computed(() => {
   let list = [...tableData.value];
   if (searchForm.value.name) {
-    list = list.filter((item) =>
-      item.name.toLowerCase().includes(searchForm.value.name.toLowerCase())
-    );
+    list = list.filter((item) => item.name.includes(searchForm.value.name));
   }
-  if (searchForm.value.templateId) {
-    list = list.filter((item) => item.templateId === searchForm.value.templateId);
+  if (searchForm.value.publishDate) {
+    list = list.filter((item) => item.publishDate === searchForm.value.publishDate);
   }
   if (searchForm.value.status) {
     list = list.filter((item) => item.status === searchForm.value.status);
@@ -440,19 +429,20 @@ const filteredTableData = computed(() => {
   return list;
 });
 
-const statusClass = (status: string) => (status === "已发布" ? "status-published" : "status-draft");
+const statusClass = (status: string) => {
+  if (status === "已发布") return "status-published";
+  if (status === "草稿") return "status-draft";
+  if (status === "已完成") return "status-completed";
+  return "";
+};
 
 const handleSearch = () => ElMessage.success("已筛选");
 const resetSearch = () => {
-  searchForm.value = { name: "", templateId: "", status: "" };
+  searchForm.value = { name: "", publishDate: "", status: "" };
   ElMessage.info("已重置筛选条件");
 };
 
-// 指标详情视图切换
-const showDetail = ref(false);
-const currentDetail = ref<IndicatorItem | null>(null);
-const currentTemplateDetail = ref<TemplateItem | null>(null);
-
+// 详情视图
 const handleDetail = (row: IndicatorItem) => {
   router.push({
     path: "/indicator-detail",
@@ -464,13 +454,7 @@ const handleDetail = (row: IndicatorItem) => {
   });
 };
 
-const backToList = () => {
-  showDetail.value = false;
-  currentDetail.value = null;
-  currentTemplateDetail.value = null;
-};
-
-// 指标弹窗逻辑
+// 指标弹窗
 const dialogVisible = ref(false);
 const dialogTitle = ref("新建指标");
 const isEditMode = ref(false);
@@ -478,15 +462,10 @@ const editingId = ref<number | null>(null);
 const formRef = ref<FormInstance>();
 const formData = ref({
   name: "",
-  templateId: "",
-  department: "",
   deadline: "",
 });
-
 const formRules: FormRules = {
   name: [{ required: true, message: "请输入指标名称", trigger: "blur" }],
-  templateId: [{ required: true, message: "请选择指标模板", trigger: "change" }],
-  department: [{ required: true, message: "请选择适用部门", trigger: "change" }],
   deadline: [{ required: true, message: "请选择截止日期", trigger: "change" }],
 };
 
@@ -499,12 +478,7 @@ const openCreateDialog = () => {
   isEditMode.value = false;
   editingId.value = null;
   dialogTitle.value = "新建指标";
-  formData.value = {
-    name: "",
-    templateId: "",
-    department: "",
-    deadline: "",
-  };
+  formData.value = { name: "", deadline: "" };
   formRef.value?.clearValidate();
   dialogVisible.value = true;
 };
@@ -513,12 +487,7 @@ const openEditDialog = (row: IndicatorItem) => {
   isEditMode.value = true;
   editingId.value = row.id;
   dialogTitle.value = "编辑指标";
-  formData.value = {
-    name: row.name,
-    templateId: row.templateId || "",
-    department: row.department,
-    deadline: row.deadline,
-  };
+  formData.value = { name: row.name, deadline: row.deadline };
   formRef.value?.clearValidate();
   dialogVisible.value = true;
 };
@@ -533,18 +502,12 @@ const handleSave = async () => {
   if (!formRef.value) return;
   await formRef.value.validate((valid) => {
     if (!valid) return ElMessage.error("请填写完整信息");
-
-    const templateName = getTemplateName(formData.value.templateId);
-
     if (isEditMode.value && editingId.value !== null) {
-      const index = tableData.value.findIndex((i) => i.id === editingId.value);
-      if (index !== -1) {
-        tableData.value[index] = {
-          ...tableData.value[index],
+      const idx = tableData.value.findIndex((i) => i.id === editingId.value);
+      if (idx !== -1) {
+        tableData.value[idx] = {
+          ...tableData.value[idx],
           name: formData.value.name,
-          templateId: formData.value.templateId,
-          templateName,
-          department: formData.value.department,
           deadline: formData.value.deadline,
         };
         persistIndicators();
@@ -552,16 +515,15 @@ const handleSave = async () => {
         dialogVisible.value = false;
       }
     } else {
-      const newIndicator: IndicatorItem = {
+      const newCode = generateIndicatorCode();
+      tableData.value.push({
         id: getNextId(),
         name: formData.value.name,
-        templateId: formData.value.templateId,
-        templateName,
-        department: formData.value.department,
+        indicatorCode: newCode,
+        publishDate: "",
         deadline: formData.value.deadline,
         status: "草稿",
-      };
-      tableData.value.push(newIndicator);
+      });
       persistIndicators();
       ElMessage.success("保存成功，当前为草稿状态");
       dialogVisible.value = false;
@@ -570,7 +532,6 @@ const handleSave = async () => {
 };
 
 const handleEdit = (row: IndicatorItem) => openEditDialog(row);
-
 const handleDelete = (row: IndicatorItem) => {
   ElMessageBox.confirm(`确定删除指标“${row.name}”吗？`, "提示", {
     confirmButtonText: "确定",
@@ -595,9 +556,30 @@ const handlePublish = (row: IndicatorItem) => {
     type: "info",
   })
     .then(() => {
+      const today = new Date();
+      const publishDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(today.getDate()).padStart(2, "0")}`;
       row.status = "已发布";
+      row.publishDate = publishDate;
       persistIndicators();
       ElMessage.success("发布成功");
+    })
+    .catch(() => {});
+};
+
+const handleRecall = (row: IndicatorItem) => {
+  ElMessageBox.confirm(`撤回后指标“${row.name}”将变为草稿状态，确认吗？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      row.status = "草稿";
+      row.publishDate = "";
+      persistIndicators();
+      ElMessage.success("已撤回为草稿");
     })
     .catch(() => {});
 };
@@ -606,11 +588,7 @@ const handlePublish = (row: IndicatorItem) => {
 const templateDialogVisible = ref(false);
 const templateDialogTitle = ref("新建模板");
 const templateFormRef = ref<FormInstance>();
-const templateForm = ref({
-  id: "",
-  name: "",
-  fields: [] as TemplateField[],
-});
+const templateForm = ref({ id: "", name: "", fields: [] as TemplateField[] });
 const templateRules: FormRules = {
   name: [{ required: true, message: "请输入模板名称", trigger: "blur" }],
 };
@@ -619,14 +597,9 @@ let editingTemplateId = "";
 const openCreateTemplateDialog = () => {
   editingTemplateId = "";
   templateDialogTitle.value = "新建模板";
-  templateForm.value = {
-    id: "",
-    name: "",
-    fields: [],
-  };
+  templateForm.value = { id: "", name: "", fields: [] };
   templateDialogVisible.value = true;
 };
-
 const openEditTemplateDialog = (template: TemplateItem) => {
   editingTemplateId = template.id;
   templateDialogTitle.value = "编辑模板";
@@ -637,13 +610,8 @@ const openEditTemplateDialog = (template: TemplateItem) => {
   };
   templateDialogVisible.value = true;
 };
-
 const addTemplateField = () => {
-  templateForm.value.fields.push({
-    id: Date.now(),
-    type: "input",
-    label: "",
-  });
+  templateForm.value.fields.push({ id: Date.now(), type: "input", label: "" });
 };
 const removeTemplateField = (idx: number) => {
   templateForm.value.fields.splice(idx, 1);
@@ -659,10 +627,10 @@ const saveTemplate = async () => {
       now.getMinutes()
     ).padStart(2, "0")}`;
     if (editingTemplateId) {
-      const index = templates.value.findIndex((t) => t.id === editingTemplateId);
-      if (index !== -1) {
-        templates.value[index] = {
-          ...templates.value[index],
+      const idx = templates.value.findIndex((t) => t.id === editingTemplateId);
+      if (idx !== -1) {
+        templates.value[idx] = {
+          ...templates.value[idx],
           name: templateForm.value.name,
           fields: templateForm.value.fields,
           updateTime: nowStr,
@@ -670,9 +638,8 @@ const saveTemplate = async () => {
         ElMessage.success("模板已更新");
       }
     } else {
-      const newId = Date.now().toString();
       templates.value.push({
-        id: newId,
+        id: Date.now().toString(),
         name: templateForm.value.name,
         fields: templateForm.value.fields,
         createTime: nowStr,
@@ -681,7 +648,6 @@ const saveTemplate = async () => {
       ElMessage.success("模板已创建");
     }
     saveTemplates();
-    syncIndicatorTemplateNames();
     templateDialogVisible.value = false;
   });
 };
@@ -696,19 +662,13 @@ const deleteTemplate = (template: TemplateItem) => {
       if (idx !== -1) {
         templates.value.splice(idx, 1);
         saveTemplates();
-        tableData.value.forEach((indicator) => {
-          if (indicator.templateId === template.id) {
-            indicator.templateId = "";
-            indicator.templateName = "";
-          }
-        });
-        persistIndicators();
         ElMessage.success("删除成功");
       }
     })
     .catch(() => {});
 };
 const templateDetailVisible = ref(false);
+const currentTemplateDetail = ref<TemplateItem | null>(null);
 const viewTemplateDetail = (template: TemplateItem) => {
   currentTemplateDetail.value = template;
   templateDetailVisible.value = true;
@@ -718,38 +678,27 @@ const resetTemplateDialog = () => {
   templateFormRef.value?.clearValidate();
 };
 const getFieldTypeName = (type: string) => {
-  const map: Record<string, string> = {
-    input: "输入框",
-    upload: "文件上传",
-    percent: "百分率",
-  };
+  const map: Record<string, string> = { input: "输入框", upload: "文件上传", percent: "百分率" };
   return map[type] || "未知";
 };
 
-// ========== Tab 切换 ==========
+// Tab
 const activeTab = ref("indicator");
-
-watch(
-  templates,
-  () => {
-    syncIndicatorTemplateNames();
-  },
-  { deep: true }
-);
 
 onMounted(() => {
   loadTemplates();
-  syncIndicatorTemplateNames();
+  ensureIndicatorCodes();
 });
 
 onActivated(() => {
   loadTemplates();
   tableData.value = loadIndicators();
-  syncIndicatorTemplateNames();
+  ensureIndicatorCodes();
 });
 </script>
 
 <style lang="scss" scoped>
+/* 样式保持不变，与之前相同，此处省略（请保留之前的样式） */
 .indicator-page {
   position: relative;
   display: flex;
@@ -803,6 +752,10 @@ onActivated(() => {
   color: #e6a23c;
   background-color: rgba(230, 162, 60, 0.1);
 }
+.status-tag.status-completed {
+  color: #409eff;
+  background-color: rgba(64, 158, 255, 0.1);
+}
 .template-manager {
   .template-header {
     display: flex;
@@ -824,7 +777,6 @@ onActivated(() => {
     margin-bottom: 12px;
   }
 }
-
 .detail-view {
   .detail-header {
     display: flex;

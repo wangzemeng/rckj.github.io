@@ -21,6 +21,20 @@ export const useUserStore = defineStore("user", () => {
    * 登录
    */
   async function login(loginRequest: LoginRequest): Promise<void> {
+    if (userInfo.value.username !== "admin") {
+      userInfo.value = {
+        id: "3",
+        username: "test",
+        nickname: "部门管理员",
+        mobile: "17621210366",
+        gender: 1,
+        avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
+        email: "youlaitech@163.com",
+        status: 1,
+        deptId: "3",
+        roleIds: [4],
+      };
+    }
     const { accessToken, refreshToken } = {
       accessToken:
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImRlcHRJZCI6MSwiZGF0YVNjb3BlIjoxLCJ1c2VySWQiOjIsImlhdCI6MTcyODE5MzA1MiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiJhZDg3NzlhZDZlYWY0OWY3OTE4M2ZmYmI5OWM4MjExMSJ9.58YHwL3sNNC22jyAmOZeSm-7MITzfHb_epBIz7LvWeA",

@@ -195,6 +195,7 @@ const loginRules = computed(() => ({
 // }
 
 async function handleLoginSubmit() {
+  window.localStorage.setItem("currentUser", String(loginFormData.value.username));
   const valid = await loginFormRef.value?.validate().then(
     () => true,
     () => false
