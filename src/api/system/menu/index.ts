@@ -142,28 +142,6 @@ const MenuAPI = {
           },
         ],
       },
-
-      {
-        path: "/aiScorePage",
-        component: "Layout",
-        redirect: "/aiScorePage/index",
-        name: "/aiScorePage",
-
-        children: [
-          {
-            path: "index",
-            name: "AiScorePage",
-            component: "aiScorePage/index",
-            meta: {
-              title: "AI评分报告",
-              icon: "dict",
-              hidden: false,
-              alwaysShow: false,
-              params: null,
-            },
-          },
-        ],
-      },
     ];
   },
   /** 获取菜单树形列表 */

@@ -74,9 +74,24 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
 
   {
+    path: "/fillin-detail",
+    name: "FillinDetail",
+    component: () => import("@/views/indicatorList/FillInDetails.vue"),
+  },
+  {
+    path: "/fillin",
+    name: "Fillin",
+    component: () => import("@/views/indicatorList/FillIn.vue"),
+  },
+  {
     path: "/dept-detail",
     name: "DeptMDetail",
     component: () => import("@/views/indicatorList/DeptMDetail.vue"),
+  },
+  {
+    path: "/notices",
+    name: "Notices",
+    component: () => import("@/views/notices/index.vue"),
   },
   {
     path: "/indicator-detail",
