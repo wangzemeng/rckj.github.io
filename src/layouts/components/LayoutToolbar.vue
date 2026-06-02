@@ -12,6 +12,11 @@
         <Fullscreen />
       </div>
 
+      <!-- 布局大小 -->
+      <div class="navbar-actions__item">
+        <SizeSelect />
+      </div>
+
       <!-- 租户选择（如果启用多租户）-->
       <div v-if="showTenantSwitcher" class="navbar-actions__item">
         <TenantSwitcher @change="handleTenantChange" />
@@ -63,6 +68,7 @@ import CommandPalette from "@/components/CommandPalette/index.vue";
 import Fullscreen from "@/components/Fullscreen/index.vue";
 import TenantSwitcher from "@/components/TenantSwitcher/index.vue";
 import { useTenantStoreHook } from "@/stores/tenant";
+import SizeSelect from "@/components/SizeSelect/index.vue";
 
 const { t } = useI18n();
 const appStore = useAppStore();

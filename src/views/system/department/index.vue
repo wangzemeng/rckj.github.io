@@ -84,7 +84,7 @@
       width="500px"
       @close="resetTypeForm"
     >
-      <el-form ref="typeFormRef" :model="typeForm" :rules="typeRules" label-width="100px">
+      <el-form ref="typeFormRef" :model="typeForm" :rules="typeRules" label-width="120px">
         <el-form-item label="部门类型名称" prop="name">
           <el-input
             v-model="typeForm.name"
@@ -105,10 +105,10 @@
     <el-dialog
       v-model="deptDialogVisible"
       :title="deptDialogTitle"
-      width="550px"
+      width="570px"
       @close="resetDeptForm"
     >
-      <el-form ref="deptFormRef" :model="deptForm" :rules="deptRules" label-width="100px">
+      <el-form ref="deptFormRef" :model="deptForm" :rules="deptRules" label-width="120px">
         <el-form-item label="所属部门分类" prop="typeId">
           <el-select v-model="deptForm.typeId" placeholder="请选择部门分类" style="width: 100%">
             <el-option
