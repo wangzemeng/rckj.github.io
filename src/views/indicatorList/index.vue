@@ -39,6 +39,17 @@
                   <el-button type="primary" @click="handleSearch">搜索</el-button>
                   <el-button @click="resetSearch">重置</el-button>
                 </el-form-item>
+
+                <!-- 新建指标按钮（仅在指标列表 Tab 且非详情模式下显示） -->
+                <el-button
+                  v-if="activeTab === 'indicator' && !showDetail"
+                  class="new-btn"
+                  type="primary"
+                  :icon="Plus"
+                  @click="openCreateDialog"
+                >
+                  新建指标
+                </el-button>
               </el-form>
             </div>
 
@@ -159,17 +170,6 @@
           </div>
         </el-tab-pane>
       </el-tabs>
-
-      <!-- 新建指标按钮（仅在指标列表 Tab 且非详情模式下显示） -->
-      <el-button
-        v-if="activeTab === 'indicator' && !showDetail"
-        class="new-btn"
-        type="primary"
-        :icon="Plus"
-        @click="openCreateDialog"
-      >
-        新建指标
-      </el-button>
     </div>
 
     <!-- 新建/编辑指标弹窗 -->
@@ -764,9 +764,9 @@ onActivated(() => {
   border-radius: 10px;
 }
 .new-btn {
-  position: absolute;
-  top: 58px;
-  right: 18px;
+  display: inline-flex;
+  align-self: self-start;
+  margin-left: auto;
 }
 .tab-card {
   padding: 0;
