@@ -12,39 +12,38 @@
       </el-button>
     </div>
 
-    <!-- 指标信息卡片 -->
+    <!-- 指标信息卡片（包含基本信息和已填报数据） -->
     <div class="info-card card">
       <div class="card-header">
         <h3>指标信息</h3>
       </div>
+      <!-- 基本信息 -->
       <el-descriptions :column="2" border>
         <el-descriptions-item label="指标编号">{{ detailData.code }}</el-descriptions-item>
         <el-descriptions-item label="指标名称">{{ detailData.name }}</el-descriptions-item>
         <el-descriptions-item label="发布日期">{{ detailData.publishDate }}</el-descriptions-item>
         <el-descriptions-item label="截止日期">{{ detailData.deadline }}</el-descriptions-item>
-      </el-descriptions>
-    </div>
-
-    <!-- 已填报数据卡片 -->
-    <div class="data-card card">
-      <div class="card-header">
-        <h3>已填报数据</h3>
-      </div>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="2026立法目标数量">
-          <span class="data-highlight">{{ detailData.targetCount }} 项</span>
-        </el-descriptions-item>
-        <el-descriptions-item label="2026立法完成数量">
-          <span class="data-highlight">{{ detailData.completedCount }} 项</span>
-        </el-descriptions-item>
-        <el-descriptions-item label="完成率">
-          <span class="completion-rate">{{ detailData.completionRate }}%</span>
-        </el-descriptions-item>
         <el-descriptions-item label="填报日期">{{ detailData.submitDate }}</el-descriptions-item>
         <el-descriptions-item label="提交人" :span="2">
           {{ detailData.submitter }}
         </el-descriptions-item>
       </el-descriptions>
+
+      <!-- 已填报数据（放在指标信息下面） -->
+      <div class="sub-section">
+        <h4>已填报数据</h4>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="2026立法目标数量">
+            <span class="data-highlight">{{ detailData.targetCount }} 项</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="2026立法完成数量">
+            <span class="data-highlight">{{ detailData.completedCount }} 项</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="完成率">
+            <span class="completion-rate">{{ detailData.completionRate }}%</span>
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
     </div>
 
     <!-- 证明材料卡片 -->
@@ -110,7 +109,7 @@
         </div>
       </div>
 
-      <!-- 综合评分 - 全新样式 -->
+      <!-- 综合评分 -->
       <div class="total-score-wrapper">
         <div class="total-score-card">
           <div class="total-score-left">
@@ -152,6 +151,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { ArrowLeft, Document, Check } from "@element-plus/icons-vue";
 
 const router = useRouter();
 
@@ -468,6 +468,20 @@ const goBack = () => {
   border: none;
 }
 
+/* 新增子区域样式 */
+.sub-section {
+  margin-top: 24px;
+  h4 {
+    margin: 0 24px 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  :deep(.el-descriptions) {
+    padding-top: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .detail-page {
     padding: 16px;
@@ -484,6 +498,9 @@ const goBack = () => {
         text-align: left;
       }
     }
+  }
+  .sub-section h4 {
+    margin-left: 20px;
   }
 }
 </style>

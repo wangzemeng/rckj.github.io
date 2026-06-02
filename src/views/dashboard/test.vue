@@ -7,18 +7,20 @@
         <span class="update-time">{{ updateTime }} 更新</span>
       </div>
       <div class="filter-area">
-        <el-date-picker
-          v-model="dateRange"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="YYYY-MM-DD"
-          :default-value="[new Date(2026, 0, 1), new Date(2026, 5, 2)]"
-          size="small"
-        />
+        <div class="filter-item">
+          <span class="filter-label">填报日期</span>
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="YYYY-MM-DD"
+            :default-value="[new Date(2026, 0, 1), new Date(2026, 5, 2)]"
+            size="small"
+          />
+        </div>
         <el-button type="primary" size="small" @click="handleQuery">查询分析</el-button>
-        <el-button size="small" plain>AI</el-button>
       </div>
     </div>
 
@@ -28,7 +30,6 @@
         <div class="stat-info">
           <div class="stat-value">
             {{ stats.totalCount }}
-            <span class="unit">%</span>
           </div>
           <div class="stat-label">填报总数</div>
         </div>
@@ -77,7 +78,7 @@
       </div>
     </div>
 
-    <!-- 消息通知（未读徽章已移至标题右侧） -->
+    <!-- 消息通知（状态标签优化：发布绿色、催办橙色、撤回红色） -->
     <div class="message-card">
       <div class="message-header">
         <h3>消息通知</h3>
@@ -96,11 +97,7 @@
               <span v-if="msg.unread" class="unread-badge-inline">未读</span>
             </div>
             <div class="msg-meta">
-              <el-tag
-                :type="msg.status === '已发布' ? 'success' : 'info'"
-                size="small"
-                effect="plain"
-              >
+              <el-tag :type="getStatusTagType(msg.status)" size="small" class="status-tag">
                 {{ msg.status }}
               </el-tag>
               <span class="msg-time">{{ msg.time }}</span>
@@ -145,7 +142,7 @@ const messages = ref([
   {
     id: "1",
     title: "ZB-2026-001 立法指标考核",
-    status: "已发布",
+    status: "发布",
     time: "06-02 08:30",
     content: "请在2026-06-15前完成填报",
     unread: true,
@@ -153,7 +150,7 @@ const messages = ref([
   {
     id: "2",
     title: "ZB-2026-003 监督工作考评",
-    status: "已发布",
+    status: "发布",
     time: "06-01 14:15",
     content: "请在2026-06-20前完成填报",
     unread: true,
@@ -161,7 +158,7 @@ const messages = ref([
   {
     id: "3",
     title: "ZB-2026-005 代表履职评价",
-    status: "已发布",
+    status: "催办",
     time: "06-01 09:00",
     content: "请在2026-06-30前完成填报",
     unread: true,
@@ -169,7 +166,7 @@ const messages = ref([
   {
     id: "4",
     title: "ZB-2026-002 预算审查监督",
-    status: "已撤回",
+    status: "撤回",
     time: "05-30 16:45",
     content: "指标内容变更，已由上级撤回",
     unread: false,
@@ -177,7 +174,7 @@ const messages = ref([
   {
     id: "5",
     title: "ZB-2026-004 建议办理质量",
-    status: "已撤回",
+    status: "撤回",
     time: "05-28 10:20",
     content: "指标内容变更，已由上级撤回",
     unread: false,
@@ -220,8 +217,15 @@ const handleQuery = () => {
 };
 
 const handleToNotices = () => {
-  // 跳转到消息通知页面（请根据实际路由调整路径）
   router.push("/notices");
+};
+
+// 状态标签颜色映射：发布绿色、催办橙色、撤回红色
+const getStatusTagType = (status: string) => {
+  if (status === "发布") return "success";
+  if (status === "催办") return "warning";
+  if (status === "撤回") return "danger";
+  return "info";
 };
 
 onMounted(() => initPieChart());
@@ -261,6 +265,15 @@ onActivated(() => initPieChart());
     display: flex;
     gap: 12px;
     align-items: center;
+    .filter-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      .filter-label {
+        font-size: 13px;
+        color: #606266;
+      }
+    }
   }
 }
 
@@ -424,6 +437,11 @@ onActivated(() => initPieChart());
         display: flex;
         gap: 12px;
         align-items: center;
+        .status-tag {
+          padding: 2px 10px;
+          font-weight: 500;
+          border: none;
+        }
         .msg-time {
           font-size: 11px;
           color: #5b6e8c;

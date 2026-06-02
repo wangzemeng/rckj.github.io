@@ -30,7 +30,13 @@
           <span class="stat-card__num">{{ 48 }}</span>
           <span class="stat-card__label">指标总数</span>
         </div>
-        <span :class="['stat-card__badge', 'stat-card__trend stat-card__1']">全部</span>
+        <span
+          class="stat-card__trend stat-card__1"
+          style="cursor: pointer"
+          @click="router.push('/indicatorList/index')"
+        >
+          全部
+        </span>
       </div>
 
       <div class="stat-card">
@@ -41,7 +47,7 @@
           <span class="stat-card__num">{{ displayTransitionUvCount }}</span>
           <span class="stat-card__label">已发布</span>
         </div>
-        <span v-if="uvGrowthText !== '--'" class="stat-card__trend stat-card__2">2026Q1</span>
+        <!-- 已移除 2026Q1 标签 -->
       </div>
 
       <div class="stat-card">
@@ -50,7 +56,6 @@
         </div>
         <div class="stat-card__body">
           <span class="stat-card__num">{{ displayTransitionPvCount }}</span>
-          <span class="stat-card__label">已填报</span>
         </div>
         <span v-if="pvGrowthText !== '--'" class="stat-card__trend stat-card__3">填报中</span>
       </div>
@@ -61,9 +66,8 @@
         </div>
         <div class="stat-card__body">
           <span class="stat-card__num">9</span>
-          <span class="stat-card__label">AI审核中</span>
         </div>
-        <span class="stat-card__trend stat-card__4">进行中</span>
+        <span class="stat-card__trend stat-card__4">已完成</span>
       </div>
     </section>
 
@@ -112,25 +116,11 @@
     </section>
 
     <!-- ============================================================
-    Chart
+    Chart (commented out)
     ============================================================ -->
-    <!-- <section class="dash-chart">
-      <div class="card">
-        <div class="card__head">
-          <h3 class="card__title">访问趋势</h3>
-          <el-radio-group v-model="visitTrendDateRange" size="small">
-            <el-radio-button label="近7天" :value="7" />
-            <el-radio-button label="近30天" :value="30" />
-          </el-radio-group>
-        </div>
-        <div class="card__body">
-          <ECharts :options="visitTrendChartOptions" height="310px" />
-        </div>
-      </div>
-    </section> -->
 
     <!-- ============================================================
-    Bottom: todo + timeline
+    Bottom: AI report + top5 + recent events
     ============================================================ -->
 
     <div class="dash-layout">
@@ -141,7 +131,6 @@
             <el-tag size="small" round cursor-pointer>重新分析</el-tag>
           </div>
           <div class="card__body">
-            <!-- // 这里需要你AI来帮我写下UI -->
             <div class="ai-report">
               <!-- 核心结论区域 -->
               <div class="report-section report-section--conclusion">
@@ -228,7 +217,6 @@
               <el-icon class="title-icon"><TrendCharts /></el-icon>
               部门完成进度 Top 5
             </h3>
-            <!-- <el-tag size="small" round effect="plain">季度目标</el-tag> -->
           </div>
           <div class="card__body">
             <div class="progress-list">
@@ -296,7 +284,7 @@
 defineOptions({ name: "Dashboard", inheritAttrs: false });
 
 import { dayjs } from "element-plus";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import LogAPI from "@/api/system/log";
 import type { VisitOverviewDetail, VisitTrendDetail } from "@/api/system/log";
@@ -304,6 +292,21 @@ import { useUserStore } from "@/stores/user";
 import { formatGrowthRate } from "@/utils";
 import { useTransition } from "@vueuse/core";
 import { useRecentMenus } from "@/composables";
+import {
+  User,
+  Avatar,
+  Monitor,
+  Star,
+  ArrowUp,
+  ArrowDown,
+  Clock,
+  Menu,
+  DataLine,
+  WarningFilled,
+  InfoFilled,
+  TrendCharts,
+  Bell,
+} from "@element-plus/icons-vue";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -319,14 +322,16 @@ const greetings = computed(() => {
   if (hours >= 18 && hours < 24) return `晚上好，${n}`;
   return `夜深了，${n}`;
 });
-// 部门完成进度数据（内容严格按要求）
+
+// 部门完成进度数据
 const topDepartments = [
   { name: "财政局", percent: 93.2 },
   { name: "立法办", percent: 89.7 },
   { name: "教育局", percent: 85.1 },
   { name: "卫生平健委", percent: 79.4 },
 ];
-// 近期动态数据（内容与表格完全一致）
+
+// 近期动态数据
 const recentEvents = ref([
   {
     id: 1,
@@ -372,10 +377,6 @@ const visitOverviewData = ref<VisitOverviewDetail>({
   totalPvCount: 0,
 });
 
-const uvGrowthText = computed(() => {
-  const r = visitOverviewData.value.uvGrowthRate;
-  return r == null ? "--" : formatGrowthRate(r);
-});
 const pvGrowthText = computed(() => {
   const r = visitOverviewData.value.pvGrowthRate;
   return r == null ? "--" : formatGrowthRate(r);
@@ -518,9 +519,6 @@ $gap: 16px;
 $pad: 16px;
 $radius: 10px;
 
-// Card: shadow instead of border for premium feel.
-// In dark mode the shadow is hidden — the border-color
-// takes over.
 %card {
   overflow: hidden;
   background: var(--content-bg);
@@ -528,20 +526,12 @@ $radius: 10px;
   border-radius: $radius;
 }
 
-// ============================================================
-// Page
-// ============================================================
-
 .dash {
   display: flex;
   flex-direction: column;
   gap: $gap;
   padding: $pad;
 }
-
-// ============================================================
-// Header
-// ============================================================
 
 .dash-header {
   &__card {
@@ -552,19 +542,16 @@ $radius: 10px;
     justify-content: space-between;
     padding: 16px 20px;
   }
-
   &__start {
     display: flex;
     gap: 14px;
     align-items: center;
   }
-
   &__text {
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
-
   &__greeting {
     margin: 0;
     font-size: 20px;
@@ -573,13 +560,11 @@ $radius: 10px;
     color: var(--el-text-color-primary);
     letter-spacing: -0.01em;
   }
-
   &__date {
     margin: 0;
     font-size: 12px;
     color: var(--el-text-color-placeholder);
   }
-
   &__end {
     display: flex;
     gap: 16px;
@@ -593,12 +578,10 @@ $radius: 10px;
 .dash-layout {
   display: flex;
   justify-content: space-between;
-
   &-start {
     flex: 3;
     margin-right: 16px;
   }
-
   &-end {
     flex: 2;
   }
@@ -615,60 +598,12 @@ $radius: 10px;
   color: var(--el-color-primary);
   background: var(--el-color-primary-light-9);
   border-radius: 50%;
-
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 }
-
-// ============================================================
-// Brand link groups
-// ============================================================
-
-.brand-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  &__label {
-    display: inline-flex;
-    gap: 4px;
-    align-items: center;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--el-text-color-secondary);
-    letter-spacing: 0.03em;
-  }
-
-  &__icons {
-    display: flex;
-    gap: 1px;
-    align-items: center;
-  }
-}
-
-.brand-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  font-size: 18px;
-  border-radius: 6px;
-  transition:
-    color 0.15s,
-    background-color 0.15s;
-
-  &:hover {
-    background: var(--el-color-primary-light-9);
-  }
-}
-
-// ============================================================
-// Stat cards
-// ============================================================
 
 .dash-stats {
   display: grid;
@@ -683,11 +618,11 @@ $radius: 10px;
   padding: 24px;
   @extend %card;
 
-  // 四种颜色变体
   &__1 {
     display: flex;
     padding: 2px 8px;
     color: #409eff;
+    cursor: pointer;
     background-color: rgba(64, 158, 255, 0.1);
     border-radius: 4px;
     @media (prefers-color-scheme: dark) {
@@ -704,7 +639,6 @@ $radius: 10px;
       background-color: rgba(103, 194, 58, 0.2);
     }
   }
-
   &__3 {
     display: flex;
     padding: 2px 8px;
@@ -715,7 +649,6 @@ $radius: 10px;
       background-color: rgba(230, 162, 60, 0.2);
     }
   }
-
   &__4 {
     display: flex;
     padding: 2px 8px;
@@ -734,7 +667,6 @@ $radius: 10px;
     width: 48px;
     height: 48px;
     border-radius: 12px;
-
     &--blue {
       color: var(--el-color-primary);
       background: var(--el-color-primary-light-9);
@@ -752,14 +684,12 @@ $radius: 10px;
       background: var(--el-color-primary-light-9);
     }
   }
-
   &__body {
     display: flex;
     flex: 1;
     flex-direction: column;
     min-width: 0;
   }
-
   &__num {
     font-size: 28px;
     font-weight: 600;
@@ -767,17 +697,14 @@ $radius: 10px;
     color: var(--el-text-color-primary);
     letter-spacing: -0.02em;
   }
-
   &__label {
     font-size: 12px;
     color: var(--el-text-color-secondary);
   }
-
   &__badge {
     flex-shrink: 0;
     font-size: 11px;
     font-weight: 500;
-
     &--on {
       color: var(--el-color-success);
     }
@@ -785,7 +712,6 @@ $radius: 10px;
       color: var(--el-color-danger);
     }
   }
-
   &__trend {
     display: inline-flex;
     flex-shrink: 0;
@@ -794,37 +720,28 @@ $radius: 10px;
     font-size: 12px;
     font-weight: 500;
     color: var(--el-text-color-secondary);
-
     &--up {
       color: var(--el-color-danger);
     }
   }
 }
 
-// ============================================================
-// Generic card
-// ============================================================
-
 .card {
   @extend %card;
-
   &__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 14px 20px;
   }
-
   &__title {
     margin: 0;
     font-size: 14px;
     font-weight: 500;
     color: var(--el-text-color-primary);
   }
-
   &__body {
     padding: 0 20px 20px;
-
     &--scroll {
       flex: 1;
       padding: 0;
@@ -833,37 +750,26 @@ $radius: 10px;
   }
 }
 
-// ============================================================
-// Chart & bottom grids
-// ============================================================
-
 .dash-bottom {
   display: grid;
   grid-template-columns: 1fr;
   gap: $gap;
 }
 
-// ============================================================
-// Todo rows
-// ============================================================
-
 .todo-row {
   display: flex;
   gap: 10px;
   align-items: center;
   padding: 10px 0;
-
   & + & {
     border-top: 1px solid var(--el-border-color-lighter);
   }
-
   &--done {
     .todo-row__title {
       color: var(--el-text-color-placeholder);
       text-decoration: line-through;
     }
   }
-
   &__icon--pending {
     flex-shrink: 0;
     color: var(--el-color-warning);
@@ -872,7 +778,6 @@ $radius: 10px;
     flex-shrink: 0;
     color: var(--el-color-success);
   }
-
   &__title {
     flex: 1;
     min-width: 0;
@@ -882,11 +787,9 @@ $radius: 10px;
     color: var(--el-text-color-regular);
     white-space: nowrap;
   }
-
   &__tag {
     flex-shrink: 0;
   }
-
   &__time {
     flex-shrink: 0;
     font-size: 12px;
@@ -894,15 +797,10 @@ $radius: 10px;
   }
 }
 
-// ============================================================
-// Activity feed
-// ============================================================
-
 .feed {
   display: flex;
   flex-direction: column;
   padding: 8px 20px 16px;
-
   &__item {
     position: relative;
     display: flex;
@@ -910,7 +808,6 @@ $radius: 10px;
     gap: 8px;
     align-items: baseline;
     padding: 9px 0 9px 16px;
-
     &::before {
       position: absolute;
       top: 22px;
@@ -920,12 +817,10 @@ $radius: 10px;
       content: "";
       background: var(--el-border-color-lighter);
     }
-
     &:last-child::before {
       display: none;
     }
   }
-
   &__dot {
     position: absolute;
     top: 12px;
@@ -933,7 +828,6 @@ $radius: 10px;
     width: 7px;
     height: 7px;
     border-radius: 50%;
-
     &--blue {
       background: var(--el-color-primary);
     }
@@ -950,7 +844,6 @@ $radius: 10px;
       background: var(--el-text-color-placeholder);
     }
   }
-
   &__text {
     flex: 1;
     min-width: 0;
@@ -958,17 +851,12 @@ $radius: 10px;
     line-height: 1.4;
     color: var(--el-text-color-regular);
   }
-
   &__time {
     flex-shrink: 0;
     font-size: 12px;
     color: var(--el-text-color-placeholder);
   }
 }
-
-// ============================================================
-// Recent visits grid (collapsible)
-// ============================================================
 
 .card__head-actions {
   display: flex;
@@ -980,12 +868,10 @@ $radius: 10px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 2px;
-
   &--fold {
     max-height: 42px;
     overflow: hidden;
   }
-
   &__item {
     display: flex;
     gap: 8px;
@@ -994,12 +880,10 @@ $radius: 10px;
     cursor: pointer;
     border-radius: 6px;
     transition: background-color 0.15s;
-
     &:hover {
       background: var(--el-fill-color);
     }
   }
-
   &__icon {
     display: flex;
     flex-shrink: 0;
@@ -1011,12 +895,10 @@ $radius: 10px;
     background: var(--el-fill-color-lighter);
     border-radius: 5px;
   }
-
   &__svg {
     width: 14px;
     height: 14px;
   }
-
   &__name {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1025,10 +907,6 @@ $radius: 10px;
     white-space: nowrap;
   }
 }
-
-// ============================================================
-// AI 智能分析报告样式
-// ============================================================
 
 .ai-report {
   display: flex;
@@ -1040,17 +918,14 @@ $radius: 10px;
   background: var(--el-fill-color-lighter);
   border-radius: 12px;
   transition: all 0.2s;
-
   &--conclusion {
     background: linear-gradient(135deg, rgba(64, 158, 255, 0.05), rgba(64, 158, 255, 0.01));
     border-left: 3px solid var(--el-color-primary);
   }
-
   &--warning {
     background: linear-gradient(135deg, rgba(230, 162, 60, 0.05), rgba(230, 162, 60, 0.01));
     border-left: 3px solid var(--el-color-warning);
   }
-
   &__header {
     display: flex;
     gap: 8px;
@@ -1058,23 +933,19 @@ $radius: 10px;
     padding: 14px 20px 8px 20px;
     border-bottom: 1px solid var(--el-border-color-lighter);
   }
-
   &__icon {
     color: var(--el-text-color-secondary);
   }
-
   &__title {
     font-size: 14px;
     font-weight: 500;
     color: var(--el-text-color-primary);
   }
-
   &__body {
     padding: 16px 20px 20px 20px;
   }
 }
 
-// 核心结论数据指标
 .conclusion-stats {
   display: flex;
   flex-wrap: wrap;
@@ -1089,24 +960,20 @@ $radius: 10px;
   flex-direction: column;
   gap: 6px;
   min-width: 110px;
-
   .stat-label {
     font-size: 12px;
     color: var(--el-text-color-secondary);
   }
-
   .stat-value {
     font-size: 22px;
     font-weight: 600;
     color: var(--el-text-color-primary);
     letter-spacing: -0.01em;
-
     &--primary {
       font-size: 26px;
       color: var(--el-color-primary);
     }
   }
-
   .stat-trend {
     font-size: 12px;
     font-weight: 500;
@@ -1119,19 +986,16 @@ $radius: 10px;
   font-size: 13px;
   line-height: 1.6;
   color: var(--el-text-color-regular);
-
   strong {
     font-weight: 600;
     color: var(--el-text-color-primary);
   }
-
   .trend-up {
     font-weight: 600;
     color: var(--el-color-success);
   }
 }
 
-// 注意事项列表
 .warning-list {
   display: flex;
   flex-direction: column;
@@ -1145,26 +1009,19 @@ $radius: 10px;
   font-size: 13px;
   line-height: 1.4;
   color: var(--el-text-color-regular);
-
   .warning-icon {
     flex-shrink: 0;
     color: var(--el-color-warning);
   }
-
   strong {
     font-weight: 600;
     color: var(--el-text-color-primary);
   }
-
   .warning-value {
     font-weight: 600;
     color: var(--el-color-danger);
   }
 }
-
-// ============================================================
-// 部门完成进度 Top 5 样式
-// ============================================================
 
 .dash-progress {
   height: 100%;
@@ -1184,31 +1041,26 @@ $radius: 10px;
     margin-bottom: 6px;
     font-size: 13px;
   }
-
   .dept-name {
     font-weight: 500;
     color: var(--el-text-color-primary);
   }
-
   .dept-percent {
     font-size: 15px;
     font-weight: 600;
     color: var(--el-text-color-secondary);
     letter-spacing: -0.2px;
   }
-
   .progress-bar-bg {
     height: 6px;
     overflow: hidden;
     background-color: var(--el-fill-color-light);
     border-radius: 10px;
   }
-
   .progress-bar-fill {
     height: 100%;
     border-radius: 10px;
     transition: width 0.3s ease;
-
     &.fill-high {
       background: linear-gradient(90deg, #67c23a, #95d475);
     }
@@ -1221,15 +1073,11 @@ $radius: 10px;
   }
 }
 
-// 让卡片标题里的图标与文字对齐
 .title-icon {
   margin-right: 6px;
   font-size: 16px;
   vertical-align: middle;
 }
-// ============================================================
-// 近期动态卡片样式（类表格布局）
-// ============================================================
 
 .card__body--no-padding {
   padding: 0;
@@ -1237,7 +1085,6 @@ $radius: 10px;
 
 .event-list {
   font-size: 13px;
-
   &__header,
   &__row {
     display: grid;
@@ -1246,27 +1093,22 @@ $radius: 10px;
     align-items: center;
     padding: 12px 20px;
   }
-
   &__header {
     font-weight: 500;
     color: var(--el-text-color-secondary);
     background-color: var(--el-fill-color-lighter);
     border-bottom: 1px solid var(--el-border-color-lighter);
   }
-
   &__row {
     border-bottom: 1px solid var(--el-border-color-lighter);
     transition: background 0.2s;
-
     &:hover {
       background-color: var(--el-fill-color-light);
     }
-
     &:last-child {
       border-bottom: none;
     }
   }
-
   .col-dept,
   .col-type,
   .col-target,
@@ -1276,36 +1118,28 @@ $radius: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-
   .col-dept {
     font-weight: 500;
     color: var(--el-text-color-primary);
   }
-
   .col-target {
     color: var(--el-text-color-regular);
   }
-
   .col-time {
     font-size: 12px;
     color: var(--el-text-color-placeholder);
   }
 }
 
-// 响应式：在小屏幕下变成可滚动区域
 @media (max-width: 992px) {
   .event-list {
     overflow-x: auto;
-
     &__header,
     &__row {
       min-width: 700px;
     }
   }
 }
-// ============================================================
-// Responsive
-// ============================================================
 
 @media (max-width: 1200px) {
   .dash-stats {
@@ -1328,7 +1162,6 @@ $radius: 10px;
     gap: 14px;
     padding: 14px;
   }
-
   .dash-stats {
     grid-template-columns: 1fr;
   }

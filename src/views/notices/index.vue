@@ -37,8 +37,9 @@
           <span class="filter-label">状态</span>
           <el-radio-group v-model="statusFilter" size="small" @change="handleFilterChange">
             <el-radio-button label="">全部</el-radio-button>
-            <el-radio-button label="已发布">已发布</el-radio-button>
-            <el-radio-button label="已撤回">已被撤回</el-radio-button>
+            <el-radio-button label="发布">发布</el-radio-button>
+            <el-radio-button label="催办">催办</el-radio-button>
+            <el-radio-button label="撤回">撤回</el-radio-button>
           </el-radio-group>
         </div>
       </div>
@@ -59,12 +60,7 @@
               <span v-if="msg.unread" class="unread-badge">未读</span>
             </div>
             <div class="msg-meta">
-              <el-tag
-                :type="msg.status === '已发布' ? 'success' : 'danger'"
-                size="small"
-                effect="dark"
-                class="status-tag"
-              >
+              <el-tag :type="getStatusType(msg.status)" size="small" class="status-tag">
                 {{ msg.status }}
               </el-tag>
               <span class="msg-time">{{ msg.time }}</span>
@@ -93,7 +89,7 @@ const router = useRouter();
 interface Message {
   id: string;
   title: string;
-  status: "已发布" | "已撤回";
+  status: "发布" | "催办" | "撤回";
   time: string;
   content: string;
   unread: boolean;
@@ -104,7 +100,7 @@ const messages = ref<Message[]>([
   {
     id: "1",
     title: "ZB-2026-001 立法指标考核",
-    status: "已发布",
+    status: "发布",
     time: "06-02 08:30",
     content: "请在2026-06-15前完成填报",
     unread: true,
@@ -113,7 +109,7 @@ const messages = ref<Message[]>([
   {
     id: "2",
     title: "ZB-2026-003 监督工作考评",
-    status: "已发布",
+    status: "发布",
     time: "06-01 14:15",
     content: "请在2026-06-20前完成填报",
     unread: true,
@@ -122,7 +118,7 @@ const messages = ref<Message[]>([
   {
     id: "3",
     title: "ZB-2026-005 代表履职评价",
-    status: "已发布",
+    status: "催办",
     time: "06-01 09:00",
     content: "请在2026-06-30前完成填报",
     unread: true,
@@ -131,7 +127,7 @@ const messages = ref<Message[]>([
   {
     id: "4",
     title: "ZB-2026-002 预算审查监督",
-    status: "已撤回",
+    status: "撤回",
     time: "05-30 16:45",
     content: "指标内容变更，已由上级撤回",
     unread: false,
@@ -140,7 +136,7 @@ const messages = ref<Message[]>([
   {
     id: "5",
     title: "ZB-2026-004 建议办理质量",
-    status: "已撤回",
+    status: "撤回",
     time: "05-28 10:20",
     content: "指标内容变更，已由上级撤回",
     unread: false,
@@ -166,6 +162,13 @@ const filteredMessages = computed(() => {
   }
   return [...result].sort((a, b) => b.date.localeCompare(a.date));
 });
+
+const getStatusType = (status: string) => {
+  if (status === "发布") return "success";
+  if (status === "催办") return "warning";
+  if (status === "撤回") return "danger";
+  return "info";
+};
 
 const handleFilterChange = () => {
   ElMessage.info("筛选条件已更新");
@@ -312,7 +315,9 @@ const goBack = () => {
         gap: 12px;
         align-items: center;
         .status-tag {
+          padding: 2px 10px;
           font-weight: 500;
+          border: none;
         }
         .msg-time {
           font-size: 11px;

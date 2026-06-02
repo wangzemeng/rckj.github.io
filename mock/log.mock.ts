@@ -195,7 +195,7 @@ export default defineMock([
         todayUvCount: 42,
         totalUvCount: 19985,
         uvGrowthRate: -0.57,
-        todayPvCount: 31,
+        todayPvCount: 33,
         totalPvCount: 286086,
         pvGrowthRate: -0.65,
       },
